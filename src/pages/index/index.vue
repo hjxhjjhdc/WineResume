@@ -1,48 +1,32 @@
 <template>
-  <view class="content">
-    <image class="logo" src="/static/logo.png"></image>
-    <view class="text-area">
-      <text class="title">{{ title }}</text>
+  <view class="externalBox">
+    <!--    content-->
+    <view class="content">
+      <!--      info-->
+      <information></information>
+      <!--      menu-->
+      <m-menu></m-menu>
+
     </view>
   </view>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      title: 'Hello',
-    }
-  },
-  onLoad() {},
-  methods: {},
-}
+<script setup>
+import information from '@/components/information/information.vue'
+import mMenu from '@/components/menu/menu.vue'
+
 </script>
 
-<style>
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo {
-  height: 200rpx;
-  width: 200rpx;
-  margin-top: 200rpx;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 50rpx;
-}
-
-.text-area {
+<style lang="scss" scoped>
+.externalBox {
+  position: relative;
   display: flex;
   justify-content: center;
-}
+  padding: 1rpx;
 
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
+  .content {
+    max-width: 1200px;
+    width: 90%;
+  }
 }
 </style>
