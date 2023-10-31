@@ -3,7 +3,7 @@
 <!--    left-->
    <view class="left-info">
      <view class="icon">
-       <image src="/static/headerico.png" mode="aspectFill" style="width: 100%;height: 100%"></image>
+       <image src="/static/icon/headerico.png" mode="aspectFill" style="width: 100%;height: 100%"></image>
      </view>
      <view class="info">
        <view class="user">
