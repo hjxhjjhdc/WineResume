@@ -18,7 +18,6 @@ export default {
 @import "static/font/iconfont.css";
 *{
   font-family: "阿里妈妈刀隶体 Regular", sans-serif;
-  font-size: 30rpx;
 }
 page{
   /*background: #f2f3f5;*/

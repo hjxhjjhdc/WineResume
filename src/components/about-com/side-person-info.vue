@@ -9,8 +9,12 @@
       <view> 男</view>
     </view>
     <view class="info-item">
-      <view>Graduation institution :</view>
-      <view> 青岛 </view>
+      <view>Education :</view>
+      <view> 本科 </view>
+    </view>
+    <view class="info-item">
+      <view>Seniority :</view>
+      <view> Three Year </view>
     </view>
     <view class="info-item">
       <view>Address :</view>
@@ -58,6 +62,7 @@ const qrcodeOpen = (e)=>{
   border-radius: 20rpx;
   //background: #e8bebe;
   box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
+  max-height: 320rpx;
   .info-item{
     margin-bottom:15rpx;
     display: flex;

@@ -54,8 +54,10 @@ const eyeProtection = ()=>{
       }
 
       .introduction {
+        text-shadow:0 0 15rpx rgba(0, 0, 0,.8);
         font-size: 35rpx;
-        color: #c0c0c0;
+        //color: #c0c0c0;
+        color: #fff;
       }
     }
   }
