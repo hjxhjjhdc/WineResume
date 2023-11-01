@@ -1,45 +1,77 @@
 <template>
   <view class="Personal-Information">
-    <view class="info-item">
-      <view>Age :</view>
-      <view>98年</view>
-    </view>
-    <view class="info-item">
-      <view>Gender :</view>
-      <view> 男</view>
-    </view>
-    <view class="info-item">
-      <view>Education :</view>
-      <view> 本科 </view>
-    </view>
-    <view class="info-item">
-      <view>Seniority :</view>
-      <view> Three Year </view>
-    </view>
-    <view class="info-item">
-      <view>Address :</view>
-      <view>济南</view>
-    </view>
-    <view class="info-item qrcode-box">
-      <view>E-mail :</view>
-      <view>
-        <view class="iconfont icon-ico icon-qrcode" @mouseenter="qrcodeOpen" @mouseleave="qrcodeOpen"></view>
-        <view class="qrcode" :style="`left:${client.x}`">
-          <uqrcode
-              ref="uqrcode"
-              canvas-id="qrcode"
-              value="http://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=QHFxcHVycXV1dnIAMTFuIy8t"
-              :options="{ margin: 10 }"
-              :hide="qrcodeHide"
-          ></uqrcode>
+    <skeleton
+        :loading="skeleton.infoLoading"
+        :row="skeleton.infoRow"
+        :showAvatar="skeleton.infoShowAvatar"
+        :showTitle="skeleton.infoShowTitle"
+        :titleWidth="skeleton.infoTitleWidth"
+    >
+      <view class="info-item">
+        <view>Age :</view>
+        <view>{{ cacheProps.age }}</view>
+      </view>
+      <view class="info-item">
+        <view>Gender :</view>
+        <view> {{ cacheProps.gender }}</view>
+      </view>
+      <view class="info-item">
+        <view>Education :</view>
+        <view> {{ cacheProps.education }} </view>
+      </view>
+      <view class="info-item">
+        <view>Seniority :</view>
+        <view>{{cacheProps.seniority}}</view>
+      </view>
+      <view class="info-item">
+        <view>Address :</view>
+        <view>{{ cacheProps.address }}</view>
+      </view>
+      <view class="info-item qrcode-box">
+        <view>E-mail :</view>
+        <view>
+          <view class="iconfont icon-ico icon-qrcode" @mouseenter="qrcodeOpen" @mouseleave="qrcodeOpen"></view>
+          <view class="qrcode" :style="`left:${client.x}`">
+            <uqrcode
+                ref="uqrcode"
+                canvas-id="qrcode"
+                :value="cacheProps.email"
+                :options="{ margin: 10 }"
+                :hide="qrcodeHide"
+            ></uqrcode>
+          </view>
         </view>
       </view>
-    </view>
+    </skeleton>
   </view>
 </template>
 
 <script setup>
-import {reactive, ref} from "vue";
+import Skeleton from '@/components/primewind-skeleton/components/skeleton/index.vue'
+import {reactive, ref, watch} from "vue";
+
+const props = defineProps(['modelValue'])
+defineEmits(['update:modelValue'])
+
+const cacheProps = ref({})
+watch(()=>props.modelValue,(n,o)=>{
+  if(n){
+    skeleton.infoLoading=false
+    cacheProps.value = n
+  }
+})
+
+/**
+ *  骨架屏
+ */
+const skeleton = reactive({
+  infoLoading :true,
+  infoRow: 5,
+  infoShowAvatar: false,
+  infoShowTitle: false,
+  infoTitleWidth:'20%',
+})
+
 /**
  * 二维码
  * */
@@ -51,6 +83,7 @@ const client = reactive({
 const qrcodeOpen = (e)=>{
   qrcodeHide.value = !qrcodeHide.value
 }
+
 </script>
 
 <style scoped lang="scss">

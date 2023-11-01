@@ -1,19 +1,27 @@
 <template>
   <view class="top-header">
 <!--    left-->
-   <view class="left-info">
-     <view class="icon">
-       <image src="/static/icon/headerico.png" mode="aspectFill" style="width: 100%;height: 100%"></image>
+   <skeleton
+       :loading="skeleton.infoLoading"
+       :row="skeleton.infoRow"
+       :showAvatar="skeleton.infoShowAvatar"
+       :showTitle="skeleton.infoShowTitle"
+       :titleWidth="skeleton.infoTitleWidth"
+   >
+     <view class="left-info">
+         <view class="icon">
+           <image :src="userInfo.pic" mode="aspectFill" style="width: 100%;height: 100%"></image>
+         </view>
+         <view class="info">
+           <view class="user">
+             {{ userInfo.name }}
+           </view>
+           <view class="introduction">
+             {{userInfo.briefIntroduction}}
+           </view>
+         </view>
      </view>
-     <view class="info">
-       <view class="user">
-         Wine
-       </view>
-       <view class="introduction">
-         一名前端开发工程师
-       </view>
-     </view>
-   </view>
+   </skeleton>
 <!--    right-->
     <view class="right-btn">
 <!--      <view @click="eyeProtection" style="cursor: pointer">护眼</view>-->
@@ -22,9 +30,26 @@
 </template>
 
 <script setup>
-const eyeProtection = ()=>{
+import Skeleton from '@/components/primewind-skeleton/components/skeleton/index.vue'
+import {inject, onMounted, reactive, watch} from "vue";
 
-}
+const userInfo = inject('userInfo')
+
+watch(()=>userInfo.value,(n,o)=>{
+  if(n){
+      skeleton.infoLoading=false
+  }
+})
+/**
+ * 骨架屏
+ */
+const skeleton = reactive({
+  infoLoading :true,
+  infoRow: 3,
+  infoShowAvatar: true,
+  infoShowTitle: true,
+  infoTitleWidth:'20%',
+})
 </script>
 
 <style scoped lang="scss">
