@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "37871137",
+      "name": "027_课程",
+      "font_class": "a-027_kecheng",
+      "unicode": "e693",
+      "unicode_decimal": 59027
+    },
+    {
+      "icon_id": "37871143",
+      "name": "027_上网",
+      "font_class": "a-027_shangwang",
+      "unicode": "e694",
+      "unicode_decimal": 59028
+    },
+    {
+      "icon_id": "37871153",
+      "name": "027_编程",
+      "font_class": "a-027_biancheng",
+      "unicode": "e696",
+      "unicode_decimal": 59030
+    },
+    {
       "icon_id": "6364167",
       "name": "二维码",
       "font_class": "ico",

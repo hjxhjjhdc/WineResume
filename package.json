@@ -54,6 +54,7 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-3090520231028001",
     "@dcloudio/uni-mp-xhs": "3.0.0-3090520231028001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-3090520231028001",
+    "lodash": "^4.17.21",
     "marked": "^9.1.4",
     "vue": "3.2.47",
     "vue-i18n": "9.6.2"
