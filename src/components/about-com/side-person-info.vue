@@ -17,11 +17,11 @@
       </view>
       <view class="info-item">
         <view>Education :</view>
-        <view> {{ cacheProps.education }} </view>
+        <view> {{ cacheProps.education }}</view>
       </view>
       <view class="info-item">
         <view>Seniority :</view>
-        <view>{{cacheProps.seniority}}</view>
+        <view>{{ cacheProps.seniority }}</view>
       </view>
       <view class="info-item">
         <view>Address :</view>
@@ -54,9 +54,9 @@ const props = defineProps(['modelValue'])
 defineEmits(['update:modelValue'])
 
 const cacheProps = ref({})
-watch(()=>props.modelValue,(n,o)=>{
-  if(n){
-    skeleton.infoLoading=false
+watch(() => props.modelValue, (n, o) => {
+  if (n) {
+    skeleton.infoLoading = false
     cacheProps.value = n
   }
 })
@@ -65,22 +65,22 @@ watch(()=>props.modelValue,(n,o)=>{
  *  骨架屏
  */
 const skeleton = reactive({
-  infoLoading :true,
+  infoLoading: true,
   infoRow: 5,
   infoShowAvatar: false,
   infoShowTitle: false,
-  infoTitleWidth:'20%',
+  infoTitleWidth: '20%',
 })
 
 /**
  * 二维码
  * */
-const qrcodeHide = ref(true )
+const qrcodeHide = ref(true)
 const client = reactive({
-  x:'50%',
-  y:0,
+  x: '50%',
+  y: 0,
 })
-const qrcodeOpen = (e)=>{
+const qrcodeOpen = (e) => {
   qrcodeHide.value = !qrcodeHide.value
 }
 
@@ -88,27 +88,32 @@ const qrcodeOpen = (e)=>{
 
 <style scoped lang="scss">
 @import "../src/uni";
-.Personal-Information{
+
+.Personal-Information {
   padding: 50rpx;
   margin-bottom: 50rpx;
   border-radius: 20rpx;
   //background: #e8bebe;
   box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
   max-height: 320rpx;
-  .info-item{
-    margin-bottom:15rpx;
+
+  .info-item {
+    margin-bottom: 15rpx;
     display: flex;
     justify-content: space-between;
   }
-  .qrcode-box{
+
+  .qrcode-box {
     position: relative;
     display: flex;
     align-items: center;
-    .icon-qrcode{
+
+    .icon-qrcode {
       font-size: $icon-font-size;
       cursor: pointer;
     }
-    .qrcode{
+
+    .qrcode {
       position: absolute;
       left: 50%;
       border-radius: 20rpx;

@@ -1,16 +1,16 @@
 <template>
   <layout>
     <uni-row class="content">
-<!--      fixed-->
-      <uni-col  xs="" sm="" :md="6" :lg="6" :xl="6"  v-show="computedScrollFlag">
-        <person-info  :class="[computedScrollFlag?'fix':'fixHide']" v-model="contentObj"></person-info>
+      <!--      fixed-->
+      <uni-col xs="" sm="" :md="6" :lg="6" :xl="6" v-show="computedScrollFlag">
+        <person-info :class="[computedScrollFlag?'fix':'fixHide']" v-model="contentObj"></person-info>
       </uni-col>
-<!--      default-->
-      <uni-col  xs="" sm="" :md="6" :lg="6" :xl="6"  v-show="!computedScrollFlag">
+      <!--      default-->
+      <uni-col xs="" sm="" :md="6" :lg="6" :xl="6" v-show="!computedScrollFlag">
         <person-info :class="[computedScrollFlag?'transparent':'']" v-model="contentObj"></person-info>
       </uni-col>
-<!--      right content-->
-      <uni-col  xs="" sm="" :md="17" :lg="17" :xl="17">
+      <!--      right content-->
+      <uni-col xs="" sm="" :md="17" :lg="17" :xl="17">
         <content v-model="contentObj"></content>
       </uni-col>
     </uni-row>
@@ -21,7 +21,7 @@
 import layout from '@/components/layout/layout.vue'
 import personInfo from '@/components/about-com/side-person-info.vue'
 import content from '@/components/about-com/about-content.vue'
-import {onMounted, reactive,ref,provide,computed} from 'vue'
+import {onMounted, reactive, ref, provide, computed} from 'vue'
 import {onShow} from '@dcloudio/uni-app'
 import * as _ from 'lodash'
 
@@ -31,7 +31,7 @@ import * as _ from 'lodash'
  * @type {Ref<UnwrapRef<{}>>}
  */
 const contentObj = ref({})
-const getUserInfo = () =>{
+const getUserInfo = () => {
   uniCloud.callFunction({
     name: 'information',
   }).then(({result}) => {
@@ -49,38 +49,41 @@ provide('userInfo', contentObj)
  * 滚动
  * @type {Ref<UnwrapRef<boolean>>}
  */
-const computedScrollFlag = computed(()=>{
-  return scrollFlag.value && window.innerWidth>=992
+const computedScrollFlag = computed(() => {
+  return scrollFlag.value && window.innerWidth >= 992
 })
 const scrollFlag = ref(false)
-const handleScroll = ()=>{
+const handleScroll = () => {
   scrollFlag.value = window.scrollY > 300;
 }
-onMounted(()=>{
+onMounted(() => {
   getUserInfo()
-  window.addEventListener("scroll", _.throttle(handleScroll,100))
+  window.addEventListener("scroll", _.throttle(handleScroll, 100))
 })
 </script>
 
 <style lang="scss" scoped>
-.content{
+.content {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   padding-bottom: 50rpx;
   width: 100%;
   position: relative;
-  .fix{
+
+  .fix {
     position: fixed;
     top: 10vh;
     opacity: 1;
     min-width: 500rpx;
   }
-  .fixHide{
+
+  .fixHide {
     position: fixed;
     opacity: 0;
   }
-  .transparent{
+
+  .transparent {
     opacity: 0;
   }
 }

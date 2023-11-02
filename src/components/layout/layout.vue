@@ -20,26 +20,26 @@
 <script setup>
 import information from '@/components/information/information.vue'
 import mMenu from '@/components/menu/menu.vue'
-import {onMounted,ref} from "vue";
+import {onMounted, ref} from "vue";
 import * as _ from "lodash";
 
 const scrollFlag = ref(false)
-const handleScroll = ()=>{
+const handleScroll = () => {
   scrollFlag.value = window.scrollY > 300;
 }
 /**
  *  回滚至头部
  */
-const toTop =()  =>{
-  let time  = setInterval(()=>{
-    document.documentElement.scrollTop = document.documentElement.scrollTop-50;
-    if(window.scrollY<=0){
+const toTop = () => {
+  let time = setInterval(() => {
+    document.documentElement.scrollTop = document.documentElement.scrollTop - 50;
+    if (window.scrollY <= 0) {
       clearInterval(time)
     }
-  },10)
+  }, 10)
 }
-onMounted(()=>{
-  window.addEventListener("scroll", _.throttle(handleScroll,100))
+onMounted(() => {
+  window.addEventListener("scroll", _.throttle(handleScroll, 100))
 })
 </script>
 
@@ -55,7 +55,8 @@ onMounted(()=>{
     width: 90%;
   }
 }
-.fix-top{
+
+.fix-top {
   position: fixed;
   bottom: 150rpx;
   right: 150rpx;
@@ -65,11 +66,12 @@ onMounted(()=>{
   border-radius: 50%;
   text-align: center;
   cursor: pointer;
-  .icon{
+
+  .icon {
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
   }
 }
 </style>

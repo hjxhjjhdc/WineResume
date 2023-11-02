@@ -16,10 +16,12 @@ export default {
 /*每个页面公共css */
 @import "static/font/font.css";
 @import "static/font/iconfont.css";
-body{
+
+body {
   font-family: "阿里妈妈刀隶体 Regular", sans-serif;
 }
-page{
+
+page {
   /*background: #f2f3f5;*/
 }
 </style>

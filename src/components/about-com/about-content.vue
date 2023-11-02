@@ -1,5 +1,5 @@
 <template>
-  <view >
+  <view>
     <!--  Professional Skills-->
     <view class="content-box">
       <skeleton
@@ -10,7 +10,7 @@
           :titleWidth="skeleton.contentTitleWidth"
       >
         <view class="content-title">
-          <keCheng style="width: 50rpx;height: 50rpx" />
+          <keCheng class="icon"/>
           <view>Professional Skills</view>
         </view>
         <view class="content">
@@ -28,7 +28,7 @@
           :titleWidth="skeleton.contentTitleWidth"
       >
         <view class="content-title">
-          <bianCheng style="width: 50rpx;height: 50rpx" />
+          <bianCheng class="icon"/>
           <view>Project Experience</view>
         </view>
         <view class="content">
@@ -46,7 +46,7 @@
           :titleWidth="skeleton.contentTitleWidth"
       >
         <view class="content-title">
-          <shangWang style="width: 50rpx;height: 50rpx" />
+          <shangWang class="icon"/>
           <view>Work Experience</view>
         </view>
         <view class="content">
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import  * as marked from 'marked'
+import * as marked from 'marked'
 import {reactive, ref, watch} from "vue";
 import Skeleton from '@/components/primewind-skeleton/components/skeleton/index.vue'
 import keCheng from '@/static/icon/small-icon-svg/kecheng.vue'
@@ -78,9 +78,9 @@ const workExperience = ref('')
 /**
  * 监听props
  */
-watch(()=>props.modelValue,(n,o)=>{
-  if(n){
-    skeleton.contentLoading=false
+watch(() => props.modelValue, (n, o) => {
+  if (n) {
+    skeleton.contentLoading = false
     professionalSkills.value = marked.parse(n.professionalSkills)
     projectExperience.value = marked.parse(n.projectExperience)
     workExperience.value = marked.parse(n.workExperience)
@@ -91,11 +91,11 @@ watch(()=>props.modelValue,(n,o)=>{
  *  骨架屏
  */
 const skeleton = reactive({
-  contentLoading :true,
+  contentLoading: true,
   contentRow: 7,
   contentShowAvatar: false,
   contentShowTitle: true,
-  contentTitleWidth:'20%',
+  contentTitleWidth: '20%',
 })
 /**
  *  用户模块
@@ -111,23 +111,32 @@ const skeleton = reactive({
 
 <style scoped lang="scss">
 @import "../../uni";
-*{
+
+* {
   padding: 0;
   margin: 0;
 }
-.content-box{
+
+.content-box {
   width: 100%;
   height: 50vh;
   border-radius: 20rpx;
   box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
   margin-bottom: 50rpx;
-  .content-title{
+
+  .content-title {
     font-size: $title-font-size;
-    padding: 40rpx 0  0 40rpx;
+    padding: 40rpx 0 0 40rpx;
     display: flex;
     align-items: center;
+
+    .icon {
+      width: 50rpx;
+      height: 50rpx
+    }
   }
-  .content{
+
+  .content {
     line-height: 1.5;
     padding: 50rpx;
   }
