@@ -1,5 +1,4 @@
 <template>
-<!--  style="width: 68%; min-width: 660rpx;"-->
   <view >
     <!--  Professional Skills-->
     <view class="content-box">

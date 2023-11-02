@@ -89,8 +89,6 @@ const qrcodeOpen = (e)=>{
 <style scoped lang="scss">
 @import "../src/uni";
 .Personal-Information{
-  //width: 25%;
-  //min-width: 450rpx;
   padding: 50rpx;
   margin-bottom: 50rpx;
   border-radius: 20rpx;
