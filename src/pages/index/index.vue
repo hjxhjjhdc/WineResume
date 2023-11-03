@@ -1,5 +1,6 @@
 <template>
-  <layout>
+  <!--  <layout>-->
+  <view class="externalBox">
     <uni-row class="content">
       <!--      fixed-->
       <uni-col xs="" sm="" :md="6" :lg="6" :xl="6" v-show="computedScrollFlag">
@@ -14,7 +15,8 @@
         <content v-model="contentObj"></content>
       </uni-col>
     </uni-row>
-  </layout>
+  </view>
+  <!--  </layout>-->
 </template>
 
 <script setup>
@@ -54,7 +56,7 @@ const computedScrollFlag = computed(() => {
 })
 const scrollFlag = ref(false)
 const handleScroll = () => {
-  scrollFlag.value = window.scrollY > 300;
+  scrollFlag.value = window.scrollY > 1;
 }
 onMounted(() => {
   getUserInfo()
@@ -63,28 +65,37 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.content {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  padding-bottom: 50rpx;
-  width: 100%;
+.externalBox {
   position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 1rpx;
 
-  .fix {
-    position: fixed;
-    top: 10vh;
-    opacity: 1;
-    min-width: 500rpx;
-  }
+  .content {
+    margin-top: 120rpx;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-bottom: 50rpx;
+    position: relative;
+    max-width: 1200px;
+    width: 90%;
 
-  .fixHide {
-    position: fixed;
-    opacity: 0;
-  }
+    .fix {
+      position: fixed;
+      top: 27vh;
+      opacity: 1;
+      min-width: 500rpx;
+    }
 
-  .transparent {
-    opacity: 0;
+    .fixHide {
+      position: fixed;
+      opacity: 0;
+    }
+
+    .transparent {
+      opacity: 0;
+    }
   }
 }
 </style>

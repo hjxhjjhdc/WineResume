@@ -1,6 +1,10 @@
 <template>
   <view class="menu" v-if="!skeleton.loading">
-    <view v-for="item in menu" class="menu-item">
+    <view
+        v-for="item in menu"
+        :class="['menu-item',item.active?'menu-item-active':'']"
+        @click="handleActive(item)"
+    >
       {{ item.name }}
     </view>
   </view>
@@ -8,12 +12,7 @@
 
 <script setup>
 import {onMounted, reactive} from 'vue'
-
-/**
- * menu
- * @type {UnwrapNestedRefs<[{menuTag: string},{menuTag: string},{menuTag: string}]>}
- */
-const menu = reactive([])
+import {useMenu} from "@/hooks/useMenu";
 /**
  * 骨架屏
  */
@@ -24,23 +23,24 @@ const skeleton = reactive({
   showTitle: false,
   titleWidth: '20%',
 })
+const {menu} = useMenu(skeleton)
 /**
- * 获取menu
+ * 单击menu
+ * @param itemMenu
  */
-const getMenuList = () => {
-  uniCloud.callFunction({
-    name: 'menu',
-  }).then(({result}) => {
-    menu.length = 0
-    menu.push(...result.data)
-    skeleton.loading = false
-  }).catch((err) => {
-    console.log(err)
+const handleActive =(itemMenu) =>{
+  if(itemMenu.active){
+    return
+  }
+  console.log(itemMenu)
+  for (const item of menu) {
+    item.active = false
+  }
+  itemMenu.active = true
+  uni.reLaunch({
+    url:`${itemMenu.url}?name=${itemMenu.name}`
   })
 }
-onMounted(() => {
-  getMenuList()
-})
 </script>
 
 <style scoped lang="scss">
@@ -58,6 +58,11 @@ onMounted(() => {
       background: #e8bebe;
       color: white;
     }
+  }
+
+  .menu-item-active {
+    border-radius: 10rpx;
+    box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
   }
 }
 </style>

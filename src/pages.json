@@ -4,8 +4,24 @@
 			"path": "pages/index/index",
 			"style": {
 			}
+		},
+		{
+			"path": "pages/miscellaneous/miscellaneous",
+			"style": {
+			}
+		},
+		{
+			"path": "pages/daybook/daybook",
+			"style": {
+			}
 		}
 	],
+	"topWindow": {
+		"path": "components/layout/layout",
+		"style": {
+			"height": "350rpx"
+		}
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "枳酒",

@@ -10,14 +10,14 @@
     >
       <view class="left-info">
         <view class="icon">
-          <image :src="userInfo.pic" mode="aspectFill" style="width: 100%;height: 100%"></image>
+          <image :src="store.userInfo.pic" mode="aspectFill" style="width: 100%;height: 100%"></image>
         </view>
         <view class="info">
           <view class="user">
-            {{ userInfo.name }}
+            {{ store.userInfo.name }}
           </view>
           <view class="introduction">
-            {{ userInfo.briefIntroduction }}
+            {{ store.userInfo.briefIntroduction }}
           </view>
         </view>
       </view>
@@ -32,10 +32,15 @@
 <script setup>
 import Skeleton from '@/components/primewind-skeleton/components/skeleton/index.vue'
 import {inject, onMounted, reactive, watch} from "vue";
+import {useGetUserInfo} from "@/store/useGetUserInfo"
 
-const userInfo = inject('userInfo')
+/**
+ * pinia store
+ */
+const store = useGetUserInfo()
 
-watch(() => userInfo.value, (n, o) => {
+
+watch(() => store.userInfo, (n, o) => {
   if (n) {
     skeleton.infoLoading = false
   }

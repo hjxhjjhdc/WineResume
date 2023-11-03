@@ -22,6 +22,7 @@ import information from '@/components/information/information.vue'
 import mMenu from '@/components/menu/menu.vue'
 import {onMounted, ref} from "vue";
 import * as _ from "lodash";
+import {useGetUserInfo} from "@/store/useGetUserInfo"
 
 const scrollFlag = ref(false)
 const handleScroll = () => {
@@ -38,7 +39,13 @@ const toTop = () => {
     }
   }, 10)
 }
+/**
+ *  pinia store
+ */
+const store = useGetUserInfo()
+
 onMounted(() => {
+  store.getUserInfo()
   window.addEventListener("scroll", _.throttle(handleScroll, 100))
 })
 </script>
