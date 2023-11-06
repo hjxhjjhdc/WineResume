@@ -33,7 +33,7 @@ const handleActive =(itemMenu) =>{
     return
   }
   console.log(itemMenu)
-  for (const item of menu) {
+  for (const item of store.menu) {
     item.active = false
   }
   itemMenu.active = true
