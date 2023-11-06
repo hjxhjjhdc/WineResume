@@ -20,6 +20,9 @@
 		"path": "components/layout/layout",
 		"style": {
 			"height": "350rpx"
+		},
+		"matchMedia": {
+			"minWidth": 992
 		}
 	},
 	"globalStyle": {

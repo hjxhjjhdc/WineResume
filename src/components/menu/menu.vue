@@ -1,7 +1,7 @@
 <template>
-  <view class="menu" v-if="!skeleton.loading">
+  <view class="menu">
     <view
-        v-for="item in menu"
+        v-for="item in store.menu"
         :class="['menu-item',item.active?'menu-item-active':'']"
         @click="handleActive(item)"
     >
@@ -12,7 +12,7 @@
 
 <script setup>
 import {onMounted, reactive} from 'vue'
-import {useMenu} from "@/hooks/useMenu";
+import {useMenu} from "@/store/useMenu";
 /**
  * 骨架屏
  */
@@ -23,7 +23,7 @@ const skeleton = reactive({
   showTitle: false,
   titleWidth: '20%',
 })
-const {menu} = useMenu(skeleton)
+const store = useMenu()
 /**
  * 单击menu
  * @param itemMenu
@@ -41,6 +41,9 @@ const handleActive =(itemMenu) =>{
     url:`${itemMenu.url}?name=${itemMenu.name}`
   })
 }
+onMounted(()=>{
+  store.getMenuList()
+})
 </script>
 
 <style scoped lang="scss">

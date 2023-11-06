@@ -59,7 +59,7 @@
 
 <script setup>
 import * as marked from 'marked'
-import {reactive, ref, watch} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 import Skeleton from '@/components/primewind-skeleton/components/skeleton/index.vue'
 import keCheng from '@/static/icon/small-icon-svg/kecheng.vue'
 import bianCheng from '@/static/icon/small-icon-svg/biancheng.vue'
@@ -72,9 +72,9 @@ defineEmits(['update:modelValue'])
  * userModel 用户模块内容
  * @type {Ref<UnwrapRef<string>>}
  */
-const professionalSkills = ref('')
-const projectExperience = ref('')
-const workExperience = ref('')
+const professionalSkills = ref(marked.parse(props.modelValue.professionalSkills))
+const projectExperience = ref(marked.parse(props.modelValue.projectExperience))
+const workExperience = ref(marked.parse(props.modelValue.workExperience))
 /**
  * 监听props
  */
@@ -97,16 +97,11 @@ const skeleton = reactive({
   contentShowTitle: true,
   contentTitleWidth: '20%',
 })
-/**
- *  用户模块
- */
-/*const userModel =reactive([
-  {
-    'professionalSkills':''
-  },{
-    'projectExperience':''
+onMounted(()=>{
+  if(props.modelValue){
+    skeleton.contentLoading = false
   }
-])*/
+})
 </script>
 
 <style scoped lang="scss">

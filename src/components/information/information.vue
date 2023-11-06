@@ -55,6 +55,11 @@ const skeleton = reactive({
   infoShowTitle: true,
   infoTitleWidth: '20%',
 })
+onMounted(()=>{
+  if(store.userInfo){
+    skeleton.infoLoading = false
+  }
+})
 </script>
 
 <style scoped lang="scss">

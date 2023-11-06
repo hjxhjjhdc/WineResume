@@ -1,22 +1,20 @@
 <template>
-  <!--  <layout>-->
   <view class="externalBox">
     <uni-row class="content">
       <!--      fixed-->
       <uni-col xs="" sm="" :md="6" :lg="6" :xl="6" v-show="computedScrollFlag">
-        <person-info :class="[computedScrollFlag?'fix':'fixHide']" v-model="contentObj"></person-info>
+        <person-info :class="[computedScrollFlag?'fix':'fixHide']" v-model="store.userInfo"></person-info>
       </uni-col>
       <!--      default-->
       <uni-col xs="" sm="" :md="6" :lg="6" :xl="6" v-show="!computedScrollFlag">
-        <person-info :class="[computedScrollFlag?'transparent':'']" v-model="contentObj"></person-info>
+        <person-info :class="[computedScrollFlag?'transparent':'']" v-model="store.userInfo"></person-info>
       </uni-col>
       <!--      right content-->
       <uni-col xs="" sm="" :md="17" :lg="17" :xl="17">
-        <content v-model="contentObj"></content>
+        <content v-model="store.userInfo"></content>
       </uni-col>
     </uni-row>
   </view>
-  <!--  </layout>-->
 </template>
 
 <script setup>
@@ -26,26 +24,14 @@ import content from '@/components/about-com/about-content.vue'
 import {onMounted, reactive, ref, provide, computed} from 'vue'
 import {onShow} from '@dcloudio/uni-app'
 import * as _ from 'lodash'
+import {useGetUserInfo} from "@/store/useGetUserInfo"
 
 
 /**
  * 获取userInfo
  * @type {Ref<UnwrapRef<{}>>}
  */
-const contentObj = ref({})
-const getUserInfo = () => {
-  uniCloud.callFunction({
-    name: 'information',
-  }).then(({result}) => {
-    contentObj.value = result.data[0]
-  }).catch((err) => {
-    console.error(err)
-  })
-}
-/**
- * provide userInfo contentObj
- */
-provide('userInfo', contentObj)
+const store = useGetUserInfo()
 
 /**
  * 滚动
@@ -59,7 +45,6 @@ const handleScroll = () => {
   scrollFlag.value = window.scrollY > 1;
 }
 onMounted(() => {
-  getUserInfo()
   window.addEventListener("scroll", _.throttle(handleScroll, 100))
 })
 </script>
@@ -72,7 +57,7 @@ onMounted(() => {
   padding: 1rpx;
 
   .content {
-    margin-top: 120rpx;
+    //margin-top: 120rpx;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;

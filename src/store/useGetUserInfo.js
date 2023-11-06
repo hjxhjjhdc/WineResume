@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-
+import {updateStoreData} from './updateStoreData'
 export const useGetUserInfo = defineStore('useGetUserInfo', {
     state: () => {
         return {
@@ -12,10 +12,13 @@ export const useGetUserInfo = defineStore('useGetUserInfo', {
     actions:{
        async getUserInfo(){
            try {
-               const {result} = await uniCloud.callFunction({
-                   name: 'information',
-               })
-               this.userInfo = result.data[0]
+               // todo 节流 （暂）
+               if(!this.userInfo || updateStoreData().update){
+                   const {result} = await uniCloud.callFunction({
+                       name: 'information',
+                   })
+                   this.userInfo = result.data[0]
+               }
            }
            catch (err){
                console.log(err)

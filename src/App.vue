@@ -1,10 +1,12 @@
 <script>
+import {updateStoreData} from '@/store/updateStoreData'
 export default {
   onLaunch: function () {
     console.log('App Launch')
   },
   onShow: function () {
     console.log('App Show')
+    updateStoreData().getDate()
   },
   onHide: function () {
     console.log('App Hide')

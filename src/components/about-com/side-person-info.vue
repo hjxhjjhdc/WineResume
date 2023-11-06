@@ -48,12 +48,12 @@
 
 <script setup>
 import Skeleton from '@/components/primewind-skeleton/components/skeleton/index.vue'
-import {reactive, ref, watch} from "vue";
+import {onMounted, reactive, ref, watch} from "vue";
 
 const props = defineProps(['modelValue'])
 defineEmits(['update:modelValue'])
 
-const cacheProps = ref({})
+const cacheProps = ref(props.modelValue)
 watch(() => props.modelValue, (n, o) => {
   if (n) {
     skeleton.infoLoading = false
@@ -83,7 +83,11 @@ const client = reactive({
 const qrcodeOpen = (e) => {
   qrcodeHide.value = !qrcodeHide.value
 }
-
+onMounted(()=>{
+  if(props.modelValue){
+    skeleton.infoLoading = false
+  }
+})
 </script>
 
 <style scoped lang="scss">
