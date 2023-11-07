@@ -24,6 +24,6 @@ body {
 }
 
 page {
-  /*background: #f2f3f5;*/
+  //background:#e6e6e6;
 }
 </style>

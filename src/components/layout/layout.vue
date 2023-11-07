@@ -24,7 +24,15 @@ import {onMounted, ref} from "vue";
 import * as _ from "lodash";
 import {useGetUserInfo} from "@/store/useGetUserInfo"
 
+/**
+ *  scroll  flag
+ * @type {Ref<UnwrapRef<boolean>>}
+ */
 const scrollFlag = ref(false)
+
+/**
+ *  监听scroll
+ */
 const handleScroll = () => {
   scrollFlag.value = window.scrollY > 300;
 }
@@ -45,7 +53,13 @@ const toTop = () => {
 const store = useGetUserInfo()
 
 onMounted(() => {
-  store.getUserInfo()
+  setTimeout(()=>{
+    if(getCurrentPages()[0].$page.options._id&&getCurrentPages()[0].$page.options._id!='undefined'){
+      store.getUserInfo(getCurrentPages()[0].$page.options._id)
+    }else{
+      store.getUserInfo('6543088fe0ec19f98d981513')
+    }
+  },100)
   window.addEventListener("scroll", _.throttle(handleScroll, 100))
 })
 </script>
@@ -79,6 +93,9 @@ onMounted(() => {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+  }
+  .fix-left-music{
+
   }
 }
 </style>

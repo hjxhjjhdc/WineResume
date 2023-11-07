@@ -10,12 +10,13 @@ export const useGetUserInfo = defineStore('useGetUserInfo', {
 
     },
     actions:{
-       async getUserInfo(){
+       async getUserInfo(id){
            try {
                // todo 节流 （暂）
                if(!this.userInfo || updateStoreData().update){
                    const {result} = await uniCloud.callFunction({
                        name: 'information',
+                       data:{id}
                    })
                    this.userInfo = result.data[0]
                }

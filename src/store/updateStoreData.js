@@ -4,7 +4,7 @@ export const updateStoreData = defineStore('updateStoreData', {
     state: () => {
         return {
             lastDate:'',
-            update:false
+            update:true
         }
     },
     getters:{
@@ -13,8 +13,6 @@ export const updateStoreData = defineStore('updateStoreData', {
     actions:{
          async getDate(){
              try {
-                 console.log(Date.now()-this.lastDate)
-                 console.log(Date.now()-this.lastDate>200000)
                  if(!this.lastDate || Date.now()-this.lastDate>200000){
                      this.update = true
                      const {result} = await uniCloud.callFunction({

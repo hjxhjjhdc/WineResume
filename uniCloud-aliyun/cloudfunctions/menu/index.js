@@ -10,5 +10,5 @@ exports.main = async (event, context) => {
 			permission: 'tourist',
 			enable: true
 		}
-	).get()
+	).orderBy('sort','asc').get()
 };

@@ -97,7 +97,7 @@ onMounted(()=>{
   padding: 50rpx;
   margin-bottom: 50rpx;
   border-radius: 20rpx;
-  //background: #e8bebe;
+  //background: #ffffff;
   box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
   max-height: 320rpx;
 

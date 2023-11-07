@@ -6,6 +6,48 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "8341781",
+      "name": "播放",
+      "font_class": "bofang",
+      "unicode": "e63a",
+      "unicode_decimal": 58938
+    },
+    {
+      "icon_id": "8341782",
+      "name": "暂停",
+      "font_class": "zanting",
+      "unicode": "e63b",
+      "unicode_decimal": 58939
+    },
+    {
+      "icon_id": "8341784",
+      "name": "上一首",
+      "font_class": "shangyishou",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "8341785",
+      "name": "停止",
+      "font_class": "tingzhi",
+      "unicode": "e63d",
+      "unicode_decimal": 58941
+    },
+    {
+      "icon_id": "8341786",
+      "name": "下一首",
+      "font_class": "xiayishou",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    },
+    {
+      "icon_id": "8341787",
+      "name": "打开",
+      "font_class": "dakai",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
       "icon_id": "37871137",
       "name": "027_课程",
       "font_class": "a-027_kecheng",

@@ -72,9 +72,9 @@ defineEmits(['update:modelValue'])
  * userModel 用户模块内容
  * @type {Ref<UnwrapRef<string>>}
  */
-const professionalSkills = ref(marked.parse(props.modelValue.professionalSkills))
-const projectExperience = ref(marked.parse(props.modelValue.projectExperience))
-const workExperience = ref(marked.parse(props.modelValue.workExperience))
+const professionalSkills = ref(marked.parse(props.modelValue.professionalSkills||''))
+const projectExperience = ref(marked.parse(props.modelValue.projectExperience||''))
+const workExperience = ref(marked.parse(props.modelValue.workExperience||''))
 /**
  * 监听props
  */
@@ -114,7 +114,7 @@ onMounted(()=>{
 
 .content-box {
   width: 100%;
-  height: 50vh;
+  min-height: 50vh;
   border-radius: 20rpx;
   box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
   margin-bottom: 50rpx;

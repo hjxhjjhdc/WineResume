@@ -1,7 +1,7 @@
 <template>
   <view class="menu">
     <view
-        v-for="item in store.menu"
+        v-for="item in storeMenu.menu"
         :class="['menu-item',item.active?'menu-item-active':'']"
         @click="handleActive(item)"
     >
@@ -13,6 +13,7 @@
 <script setup>
 import {onMounted, reactive} from 'vue'
 import {useMenu} from "@/store/useMenu";
+import {useGetUserInfo} from "@/store/useGetUserInfo";
 /**
  * 骨架屏
  */
@@ -23,7 +24,11 @@ const skeleton = reactive({
   showTitle: false,
   titleWidth: '20%',
 })
-const store = useMenu()
+/**
+ * store pinia
+ */
+const storeMenu = useMenu()
+const storeUser = useGetUserInfo()
 /**
  * 单击menu
  * @param itemMenu
@@ -32,17 +37,18 @@ const handleActive =(itemMenu) =>{
   if(itemMenu.active){
     return
   }
-  console.log(itemMenu)
-  for (const item of store.menu) {
+  for (const item of storeMenu.menu) {
     item.active = false
   }
   itemMenu.active = true
   uni.reLaunch({
-    url:`${itemMenu.url}?name=${itemMenu.name}`
+    url:`${itemMenu.url}?_id=${storeUser.userInfo._id}&&name=${itemMenu.name}`
   })
 }
 onMounted(()=>{
-  store.getMenuList()
+    setTimeout(()=>{
+      storeMenu.getMenuList(getCurrentPages())
+    },100)
 })
 </script>
 
@@ -65,7 +71,7 @@ onMounted(()=>{
 
   .menu-item-active {
     border-radius: 10rpx;
-    box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
+    box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5) inset;
   }
 }
 </style>

@@ -1,22 +1,25 @@
 <template>
   <PageLayout>
+    <template #fixed="fixedProps">
+      <Music :class="fixedProps.class"></Music>
+    </template>
+    <template #default="defaultProps">
+      <Music :class="defaultProps.class"></Music>
+    </template>
     <template #rightContent>
-
+      <view style="height: 100vh">
+        111
+      </view>
     </template>
   </PageLayout>
 </template>
 
 <script setup>
-import {onLoad} from '@dcloudio/uni-app'
 import {onMounted, provide, ref} from "vue";
 import {useGetUserInfo} from "@/store/useGetUserInfo";
 import PageLayout from '@/components/layout/pageLayout.vue'
+import Music from '@/components/music/music.vue'
 
-onLoad(({name}) => {
-  uni.setNavigationBarTitle({
-    title: name
-  })
-})
 /**
  * 获取userInfo
  */
