@@ -106,10 +106,12 @@ const audioController =(type='')=>{
         musicData.value.endTime = secondToMinuteTime(endTimerOrder.value)
       },1000)
     },
-    'pause':()=>audio.pause(),
+    'pause':()=>{
+      audio.pause()
+      Timer.value=null
+    },
     'stop':()=>audio.stop(),
   }
-  // console.log(typeStrategy[type])
   typeStrategy[type]()
 }
 
