@@ -8,7 +8,13 @@ export const useMenu = defineStore('useMenu', {
         }
     },
     getters:{
-
+        computedIsActive(){
+            let id = ''
+            for (const item of this.menu) {
+                id = item.active?item.menu_id:''
+            }
+            return id
+        }
     },
     actions:{
         async getMenuList(route){

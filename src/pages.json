@@ -17,9 +17,19 @@
 		}
 	],
 	"topWindow": {
-		"path": "components/layout/layout",
+		"path": "components/layout/top-layout",
 		"style": {
 			"height": "350rpx"
+		},
+		"matchMedia": {
+			"minWidth": 992
+		}
+	},
+	"leftWindow": {
+		"path": "components/layout/left-layout",
+		"style": {
+			"height": "100vh",
+			"width": "30%"
 		},
 		"matchMedia": {
 			"minWidth": 992

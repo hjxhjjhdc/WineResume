@@ -55,8 +55,10 @@ onMounted(()=>{
 <style scoped lang="scss">
 .menu {
   padding-top: 50rpx;
+  padding-bottom: 20rpx;
   display: flex;
-
+  width: 100%;
+  backdrop-filter: blur(6px);
   .menu-item {
     margin-right: 20rpx;
     padding: 10rpx 20rpx;

@@ -1,5 +1,5 @@
 <template>
-  <PageLayout>
+<!--  <PageLayout>
     <template #fixed="fixedProps">
       <person-info :class="fixedProps.class" v-model="store.userInfo"></person-info>
     </template>
@@ -7,14 +7,13 @@
       <person-info :class="defaultProps.class" v-model="store.userInfo"></person-info>
     </template>
     <template #rightContent>
-      <content v-model="store.userInfo"></content>
     </template>
-  </PageLayout>
+  </PageLayout>-->
+      <content v-model="store.userInfo"></content>
 </template>
 
 <script setup>
-import layout from '@/components/layout/layout.vue'
-import personInfo from '@/components/about-com/side-person-info.vue'
+
 import content from '@/components/about-com/about-content.vue'
 import {onMounted, reactive, ref, provide, computed} from 'vue'
 import {onLoad, onShow} from '@dcloudio/uni-app'

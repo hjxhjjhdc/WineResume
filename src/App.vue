@@ -22,7 +22,21 @@ export default {
 body {
   font-family: "阿里妈妈刀隶体 Regular", sans-serif;
 }
-
+uni-top-window + uni-content{
+  margin: 0 auto;
+  max-width: 1200px;
+  width: 90%;
+}
+uni-left-window{
+  overflow:visible;
+  margin-right: 10rpx;
+}
+.uni-top-window{
+  position: relative;
+}
+.uni-top-window--placeholder{
+  height: 50rpx !important;
+}
 page {
   //background:#e6e6e6;
 }

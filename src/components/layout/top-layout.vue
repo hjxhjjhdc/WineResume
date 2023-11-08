@@ -5,11 +5,7 @@
       <!--      info-->
       <information></information>
       <!--      menu-->
-      <m-menu></m-menu>
-      <!--      slot-->
-      <view style="margin-top: 60rpx">
-        <slot></slot>
-      </view>
+      <m-menu :class="scrollFlag?'fix-menu':''"></m-menu>
     </view>
   </view>
   <view class="fix-top" v-show="scrollFlag" @click="toTop">
@@ -34,7 +30,7 @@ const scrollFlag = ref(false)
  *  监听scroll
  */
 const handleScroll = () => {
-  scrollFlag.value = window.scrollY > 300;
+  scrollFlag.value = window.scrollY > 110;
 }
 /**
  *  回滚至头部
@@ -54,9 +50,13 @@ const store = useGetUserInfo()
 
 onMounted(() => {
   setTimeout(()=>{
-    if(getCurrentPages()[0].$page.options._id&&getCurrentPages()[0].$page.options._id!='undefined'){
-      store.getUserInfo(getCurrentPages()[0].$page.options._id)
-    }else{
+    try {
+      if(getCurrentPages()[0].$page.options._id&&getCurrentPages()[0].$page.options._id!='undefined'){
+        store.getUserInfo(getCurrentPages()[0].$page.options._id)
+      }else{
+        store.getUserInfo('6543088fe0ec19f98d981513')
+      }
+    }catch (e) {
       store.getUserInfo('6543088fe0ec19f98d981513')
     }
   },100)
@@ -74,6 +74,10 @@ onMounted(() => {
   .content {
     max-width: 1200px;
     width: 90%;
+  }
+  .fix-menu{
+    position: fixed;
+    top: 0rpx;
   }
 }
 

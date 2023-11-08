@@ -11,8 +11,9 @@
           @mousedown="musicMouseDown"
           @mousemove="musicMouseMove"
           @mouseup="musicMouseUp"
+          ref="progress"
     >
-      <view ref="line" class="wine-music-line" :style="`width: ${pos.x}px;`">
+      <view ref="line" class="wine-music-line" :style="`width:${pos.percentage}%;`">
         <view ref="button" class="wine-music-progress-btn" ></view>
       </view>
       <view class="wine-music-time">
@@ -34,27 +35,30 @@
 
 <script setup>
 import {onMounted, reactive, ref,nextTick} from "vue";
-import {onLaunch} from '@dcloudio/uni-app'
 import {secondToMinuteTime} from "@/util/util";
-
+import * as _ from "lodash";
 /**
  * music控制器
  */
 const button = ref(null)
 const line = ref(null)
-const pos = reactive({x:0})
+const progress = ref(null)
+const pos = reactive({x:0,percentage:0})
 const musicMouseDown = (e)=>{
   e.preventDefault()
   pos.active = true
   pos.x = e.pageX - line.value.$el.getBoundingClientRect().left;
+  pos.percentage = (pos.x/progress.value.$el.clientWidth *100).toFixed(2)
 }
 const musicMouseMove =(e)=>{
   if(pos.active){
     pos.x = e.pageX - line.value.$el.getBoundingClientRect().left<0?0:e.pageX - line.value.$el.getBoundingClientRect().left;
+    pos.percentage = (pos.x/progress.value.$el.clientWidth *100).toFixed(2)
   }
 }
 const musicMouseUp =(e)=>{
   pos.active = false
+  audioController('seek')
 }
 /**
  * 获取音频url
@@ -65,19 +69,26 @@ const musicData = ref({
   startTime:'0:00',
   endTime:'0:00'
 })
-const getMusicUrl = () =>{
-  uni.request({
-    url:'https://dataiqs.com/api/netease/music/?type=random',
-    success:({data})=>{
-      if(data['data'].song_url.indexOf('/404')==-1){
-        console.log(data['data'])
-        audio.src=data['data'].song_url
-        musicData.value = {...musicData.value,...data['data']}
-      }else{
-        getMusicUrl()
-      }
-    }
-  })
+const getMusicUrl = (type='') =>{
+   uni.request({
+     url:'https://dataiqs.com/api/netease/music/?type=random',
+     success:({data})=>{
+       if(data['data'].song_url.indexOf('/404')==-1){
+         console.log(data['data'])
+         audio.src=data['data'].song_url
+         musicData.value = {...musicData.value,...data['data']}
+         if(type==='next'){
+           startTimerOrder.value = 0
+           endTimerOrder.value = 0
+           setTimeout(() => {
+             audioController('play')
+           }, 100)
+         }
+       }else{
+         getMusicUrl()
+       }
+     }
+   })
 }
 /**
  *  音频初始化
@@ -98,22 +109,65 @@ const audioController =(type='')=>{
     'play':()=> {
       audio.play()
       console.log(audio.duration)
-      endTimerOrder.value = parseInt(audio.duration)
+      if(endTimerOrder.value===0){
+        endTimerOrder.value = parseInt(audio.duration)
+      }
+      if(Timer.value){
+        clearInterval(Timer.value)
+      }
       Timer.value = setInterval(()=>{
         startTimerOrder.value = startTimerOrder.value+1
         endTimerOrder.value = endTimerOrder.value-1
         musicData.value.startTime = secondToMinuteTime(startTimerOrder.value)
         musicData.value.endTime = secondToMinuteTime(endTimerOrder.value)
+        pos.percentage = (parseInt(audio.currentTime)/parseInt(audio.duration) * 100).toFixed(2)
       },1000)
+      autoNextFlag.value = true
     },
     'pause':()=>{
       audio.pause()
-      Timer.value=null
+      clearInterval(Timer.value)
     },
     'stop':()=>audio.stop(),
+    'seek':()=>{
+      audioController('pause')
+      let s = audio.duration*pos.percentage/100
+      audio.seek(s)
+      audio.play()
+      if(Timer.value){
+        clearInterval(Timer.value)
+      }
+      startTimerOrder.value = parseInt((parseInt(audio.duration) * pos.percentage) /100)
+      endTimerOrder.value = parseInt(parseInt(audio.duration) - startTimerOrder.value)
+      Timer.value = setInterval(()=>{
+        startTimerOrder.value = startTimerOrder.value+1
+        endTimerOrder.value = endTimerOrder.value-1
+        musicData.value.startTime = secondToMinuteTime(startTimerOrder.value)
+        musicData.value.endTime = secondToMinuteTime(endTimerOrder.value)
+        pos.percentage = (parseInt(audio.currentTime)/parseInt(audio.duration) * 100).toFixed(2)
+      },1000)
+    }
   }
-  typeStrategy[type]()
+  if(musicData.value['song_url']){
+    typeStrategy[type]()
+    audio.onEnded(()=>{
+      if(autoNextFlag.value){
+        autoNextFlag.value = false
+        clearInterval(Timer.value)
+        getMusicUrl('next')
+      }
+    })
+  }else{
+   uni.showToast({
+     title:'获取音乐中~~  请稍后重试',
+     icon:"none"
+   })
+  }
 }
+/**
+ * 自动播放下一首控制器
+ */
+const autoNextFlag = ref(true)
 
 onMounted(()=>{
   getMusicUrl()
@@ -198,8 +252,10 @@ onMounted(()=>{
     .iconfont{
       cursor: pointer;
       &:hover{
+        position: relative;
         transition: .2s;
         scale: 1.3;
+        top:-5rpx
       }
     }
   }

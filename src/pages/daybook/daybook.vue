@@ -1,24 +1,24 @@
 <template>
-  <PageLayout>
-    <template #fixed="fixedProps">
+<!--  <PageLayout>
+&lt;!&ndash;    <template #fixed="fixedProps">
       <Music :class="fixedProps.class"></Music>
-    </template>
-    <template #default="defaultProps">
-      <Music :class="defaultProps.class"></Music>
-    </template>
+    </template>&ndash;&gt;
+&lt;!&ndash;    <template #default="defaultProps">&ndash;&gt;
+
+&lt;!&ndash;    </template>&ndash;&gt;
     <template #rightContent>
       <view style="height: 100vh">
         111
       </view>
     </template>
-  </PageLayout>
+  </PageLayout>-->
+  111
 </template>
 
 <script setup>
 import {onMounted, provide, ref} from "vue";
 import {useGetUserInfo} from "@/store/useGetUserInfo";
 import PageLayout from '@/components/layout/pageLayout.vue'
-import Music from '@/components/music/music.vue'
 
 /**
  * 获取userInfo
