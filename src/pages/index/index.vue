@@ -4,7 +4,7 @@
 
 <script setup>
 
-import content from '@/components/about-com/about-content.vue'
+import content from './components/about-com/about-content.vue'
 import {onMounted, reactive, ref, provide, computed} from 'vue'
 import {onLoad, onShow} from '@dcloudio/uni-app'
 import {useGetUserInfo} from "@/store/useGetUserInfo"

@@ -10,7 +10,7 @@
 
 <script setup>
 import Music from '@/components/music/music.vue'
-import personInfo from '@/components/about-com/side-person-info.vue'
+import personInfo from '@/pages/index/components/about-com/side-person-info.vue'
 import {useMenu} from "@/store/useMenu";
 import {useGetUserInfo} from "@/store/useGetUserInfo";
 import {onMounted,ref} from "vue";
