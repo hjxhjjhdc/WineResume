@@ -5,7 +5,7 @@
         v-for="item in 4"
         :style="`border-radius:${Math.random()*80+20}rpx/ ${Math.random()*80+10}rpx`"
     >
-      <skeleton
+<!--      <skeleton
           style="width: 100%;padding-bottom: 0"
           :loading="skeleton.loading"
           :row="skeleton.row"
@@ -13,9 +13,9 @@
           :showTitle="skeleton.showTitle"
           :titleWidth="skeleton.titleWidth"
           :showImage="skeleton.showImage"
-      >
+      >-->
         <image src="/static/icon/headerico.png" class="title-icon"></image>
-      </skeleton>
+<!--      </skeleton>-->
     </view>
   </view>
 </template>
