@@ -25,7 +25,7 @@
 
 <style scoped="true">
 	.wrapper {
-  border-bottom: solid 1upx #757575;
+  /*border-bottom: solid 1upx #757575;*/
   height: 100upx;
   left: 50%;
   overflow: hidden;

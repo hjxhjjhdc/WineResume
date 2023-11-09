@@ -1,31 +1,45 @@
 <template>
-<!--  <PageLayout>
-&lt;!&ndash;    <template #fixed="fixedProps">
-      <Music :class="fixedProps.class"></Music>
-    </template>&ndash;&gt;
-&lt;!&ndash;    <template #default="defaultProps">&ndash;&gt;
-
-&lt;!&ndash;    </template>&ndash;&gt;
-    <template #rightContent>
-      <view style="height: 100vh">
-        111
-      </view>
-    </template>
-  </PageLayout>-->
-  111
+  <view class="externalBox">
+    <view
+        class="content"
+        v-for="item in 4"
+        :style="`border-radius:${Math.random()*80+20}rpx/ ${Math.random()*80+10}rpx`"
+    >
+      <skeleton
+          style="width: 100%;padding-bottom: 0"
+          :loading="skeleton.loading"
+          :row="skeleton.row"
+          :showAvatar="skeleton.showAvatar"
+          :showTitle="skeleton.showTitle"
+          :titleWidth="skeleton.titleWidth"
+          :showImage="skeleton.showImage"
+      >
+        <image src="/static/icon/headerico.png" class="title-icon"></image>
+      </skeleton>
+    </view>
+  </view>
 </template>
 
 <script setup>
-import {onMounted, provide, ref} from "vue";
+import {computed, onMounted, provide, reactive, ref} from "vue";
 import {useGetUserInfo} from "@/store/useGetUserInfo";
-import PageLayout from '@/components/layout/pageLayout.vue'
-
+import Skeleton from '@/components/primewind-skeleton/components/skeleton/index.vue'
 /**
  * 获取userInfo
  */
 const store = useGetUserInfo()
 
-
+/**
+ * 骨架屏
+ */
+const skeleton =reactive({
+  loading:false,
+  row:5,
+  showAvatar:false,
+  showTitle:true,
+  titleWidth: '20%',
+  showImage:true
+})
 </script>
 
 <style scoped lang="scss">
@@ -34,17 +48,20 @@ const store = useGetUserInfo()
   display: flex;
   justify-content: center;
   padding: 1rpx;
+  flex-wrap: wrap;
 
   .content {
-    //margin-top: 120rpx;
+    margin-bottom: 40rpx;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    padding-bottom: 50rpx;
     position: relative;
     max-width: 1200px;
-    width: 90%;
-    height: 10vh;
+    width: 100%;
+    box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
+    overflow: hidden;
+    .title-icon{
+    }
   }
 }
 </style>

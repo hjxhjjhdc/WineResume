@@ -7,6 +7,9 @@
         :class="[avatarShape]"
         :style="{ width: avatarSize, height: avatarSize }"
       ></view>
+      <view  v-if="showImage"
+             class="skeleton-image"
+      ></view>
       <view class="skeleton-content">
         <view v-if="showTitle" class="skeleton-title" :style="{ width: titleWidth }"></view>
         <view class="skeleton-rows">
@@ -32,6 +35,10 @@ export default {
     loading: {
       type: Boolean,
       default: true,
+    },
+    showImage:{
+      type: Boolean,
+      default: false,
     },
     showAvatar: {
       type: Boolean,
@@ -95,7 +102,13 @@ export default {
 .skeleton-avatar.round {
   border-radius: 50%;
 }
-
+.skeleton-image{
+  flex-shrink: 0;
+  background: var(--bg-color);
+  width: 320px;
+  height: 240px;
+  margin-right: 5px;
+}
 .skeleton-content {
   width: 100%;
 }

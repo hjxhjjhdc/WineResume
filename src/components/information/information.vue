@@ -22,10 +22,6 @@
         </view>
       </view>
     </skeleton>
-    <!--    right-->
-    <view class="right-btn">
-      <!--      <view @click="eyeProtection" style="cursor: pointer">护眼</view>-->
-    </view>
   </view>
 </template>
 
@@ -79,6 +75,11 @@ onMounted(()=>{
       overflow: hidden;
       height: 120rpx;
       width: 120rpx;
+      box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
+      &:hover{
+        transition: 1.5s;
+        transform: rotate(360deg);
+      }
     }
 
     .info {
