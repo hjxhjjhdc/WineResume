@@ -6,6 +6,31 @@
         <view class="title" :title="musicData.name">{{ musicData.name }}</view>
         <view class="author">{{ musicData.al.name }}</view>
       </view>
+      <view style="cursor: pointer" @click="audioController('open')">more</view>
+      <view class="more" v-show="musicListShow">
+        <view class="wine-music-list" >
+          <view class="cloneMusicList" @click="audioController('open')">X</view>
+          <scroll-view
+              style="height: 100%"
+              :scroll-y="true"
+              :show-scrollbar="false"
+          >
+            <view
+                v-for="item in musicLists"
+                :key="item.id"
+                :class="['wine-music-list-item',item.active?'wine-music-list-item-active':'']"
+                @click="getDetail(item)">
+              <view>
+                <image :src="item.al.picUrl" class="wine-music-list-item-logo"  mode="aspectFill"></image>
+              </view>
+              <view>
+                <view>{{item.name}}</view>
+                <view>{{item.al.name}}</view>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
       <view class="theme" style="position: relative" v-show="musicLoading">
         <loading style="margin: 0 auto"></loading>
       </view>
@@ -34,27 +59,6 @@
       <view class="iconfont icon-xiayishou" title="下一首" @click="audioController('next')"></view>
 <!--      <view class="iconfont icon-dakai" title="打开列表" @click="audioController('open')"></view>-->
       <view class="iconfont icon-dakai" title="收起" @click="audioController('retract')"></view>
-    </view>
-    <view class="wine-music-list" v-show="musicListShow">
-      <scroll-view
-          :style="[musicLists.length>0?'height: 40vh':'','scrollbar-width:none']"
-          :scroll-y="true"
-          :show-scrollbar="false"
-      >
-        <view
-            v-for="item in musicLists"
-            :key="item.id"
-            :class="['wine-music-list-item',item.active?'wine-music-list-item-active':'']"
-            @click="getDetail(item)">
-          <view>
-            <image :src="item.al.picUrl" class="wine-music-list-item-logo"  mode="aspectFill"></image>
-          </view>
-          <view>
-            <view>{{item.name}}</view>
-            <view>{{item.al.name}}</view>
-          </view>
-        </view>
-      </scroll-view>
     </view>
     <view
         ref="wineMusicContainerLyric"
@@ -128,13 +132,6 @@ const audioController = (type = '') => {
       if (Timer.value) {
         clearInterval(Timer.value)
       }
-   /*   if(musicLyric.value){
-        for (const index in musicData ) {
-          if(musicData[index].active){
-            getMusicLyric(musicData[index].id)
-          }
-        }
-      }*/
       Timer.value = setInterval(() => {
         startTimerOrder.value = startTimerOrder.value + 1
         endTimerOrder.value = endTimerOrder.value - 1
@@ -166,13 +163,6 @@ const audioController = (type = '') => {
       if (Timer.value) {
         clearInterval(Timer.value)
       }
-/*      if(musicLyric.value){
-        for (const index in musicData ) {
-          if(musicData[index].active){
-            getMusicLyric(musicData[index].id)
-          }
-        }
-      }*/
       startTimerOrder.value = parseInt((parseInt(audio.duration) * pos.percentage) / 100)
       endTimerOrder.value = parseInt(parseInt(audio.duration) - startTimerOrder.value)
       Timer.value = setInterval(() => {
@@ -323,6 +313,7 @@ const getDetail = (item)=>{
       id:item.id
     }
   }).then(({data})=>{
+    resetLyric(data[0].id)
     musicData.value = {...item,...data[0]}
     startTimerOrder.value=0
     endTimerOrder.value=0
@@ -501,7 +492,48 @@ onMounted(async () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
+    position: relative;
+    .more{
+      position: absolute;
+      right: -59vw;
+      top: -100rpx;
+      width: 55vw;
+      height: 70vh;
+      background: #fff;
+      border-radius: 10rpx;
+      padding: 20rpx;
+      box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
+      .wine-music-list{
+        padding-top: 50rpx;
+        height: 97%;
+        position: relative;
+        .cloneMusicList{
+          cursor: pointer;
+          position: absolute;
+          right: 20rpx;
+          top: 0;
+        }
+        .wine-music-list-item{
+          display: flex;
+          padding: 10rpx;
+          border-radius: 20rpx;
+          cursor: pointer;
+          margin: 20rpx 0;
+          &:hover{
+            background: rgba(53, 75, 105, 0.4);
+          }
+          .wine-music-list-item-logo{
+            width: 100rpx;
+            height: 100rpx;
+            border-radius: 20rpx;
+            margin-right: 50rpx;
+          }
+        }
+        .wine-music-list-item-active{
+          background: rgba(53, 75, 105, 0.4);
+        }
+      }
+    }
     .logo {
       width: 100rpx;
       height: 100rpx;
@@ -509,7 +541,7 @@ onMounted(async () => {
     }
 
     .theme {
-      width: 70%;
+      width: 60%;
 
       .title {
         overflow: hidden;
@@ -579,28 +611,6 @@ onMounted(async () => {
         transition: .2s;
         scale: 1.3;
       }
-    }
-  }
-  .wine-music-list{
-    margin-top: 40rpx;
-    .wine-music-list-item{
-      display: flex;
-      padding: 10rpx;
-      border-radius: 20rpx;
-      cursor: pointer;
-      margin: 20rpx 0;
-      &:hover{
-        background: rgba(53, 75, 105, 0.4);
-      }
-      .wine-music-list-item-logo{
-        width: 100rpx;
-        height: 100rpx;
-        border-radius: 20rpx;
-        margin-right: 50rpx;
-      }
-    }
-    .wine-music-list-item-active{
-      background: rgba(53, 75, 105, 0.4);
     }
   }
   .wine-music-lyric{

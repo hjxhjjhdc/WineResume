@@ -9,7 +9,7 @@
           <h2>Wine</h2>
           <view class="time">
             <uni-dateformat :title="'2020/10/20 20:20:20'" :date="'2020/10/20 20:20:20'" :threshold="[[60000, 3600000]]"></uni-dateformat>
-            <view style="margin-left: 30rpx">来自：{{store.bom}}</view>
+            <view style="margin-left: 30rpx">来自：{{ip.country=='中国'?'':ip.country}}{{ip.prov}}</view>
           </view>
         </view>
       </view>
@@ -32,6 +32,16 @@ import say from './components/say.vue'
 
 const store = useGetUserInfo()
 
+const ip = ref({})
+const getIp = ()=>{
+  uni.request({
+    url:'https://qifu-api.baidubce.com/ip/local/geo/v1/district?',
+    success:({data})=>{
+      ip.value = data.data
+      console.log(ip)
+    }
+  })
+}
 
 onLoad(({name})=>{
   uni.setNavigationBarTitle({
