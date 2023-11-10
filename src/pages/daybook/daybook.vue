@@ -6,16 +6,28 @@
         :style="`border-radius:${Math.random()*80+20}rpx/ ${Math.random()*80+10}rpx`"
     >
 <!--      <skeleton
-          style="width: 100%;padding-bottom: 0"
+          style="width: 100%;"
           :loading="skeleton.loading"
           :row="skeleton.row"
           :showAvatar="skeleton.showAvatar"
           :showTitle="skeleton.showTitle"
           :titleWidth="skeleton.titleWidth"
           :showImage="skeleton.showImage"
-      >-->
-        <image src="/static/icon/headerico.png" class="title-icon"></image>
-<!--      </skeleton>-->
+      >
+      </skeleton>-->
+      <image src="/static/icon/headerico.png" class="title-icon" mode="aspectFill"></image>
+      <view class="title">
+        <view>
+          <h1>
+            <navigator url="" hover-class="navigator-hover">
+              title
+            </navigator>
+          </h1>
+        </view>
+        <view>
+          content
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -54,13 +66,18 @@ const skeleton =reactive({
     margin-bottom: 40rpx;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
     position: relative;
     max-width: 1200px;
     width: 100%;
     box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
     overflow: hidden;
     .title-icon{
+      width: 35%;
+      margin-right: 50rpx;
+    }
+    .title{
+      //font-size: 40rpx;
+      line-height: 1.5;
     }
   }
 }

@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia'
 import {updateStoreData} from './updateStoreData'
+import {browerType} from "@/util/util";
 export const useGetUserInfo = defineStore('useGetUserInfo', {
     state: () => {
         return {
-            userInfo:{}
+            userInfo:{},
+            token:'',
+            bom:''
         }
     },
     getters:{
@@ -25,6 +28,20 @@ export const useGetUserInfo = defineStore('useGetUserInfo', {
                console.log(err)
            }
 
+        },
+        getBomInfo(){
+            this.bom = browerType()
+        },
+        async getToken(){
+           try {
+               const {result} = await uniCloud.callFunction({
+                   name: 'information',
+                   data:{id}
+               })
+           }
+           catch (e) {
+
+           }
         }
     }
 

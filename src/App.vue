@@ -1,12 +1,16 @@
 <script>
 import {updateStoreData} from '@/store/updateStoreData'
+import {useGetUserInfo} from '@/store/useGetUserInfo'
+import uniIdPageInit from '@/uni_modules/uni-id-pages/init.js';
 export default {
-  onLaunch: function () {
+  onLaunch:async  function () {
     console.log('App Launch')
+    await uniIdPageInit()
   },
   onShow: function () {
     console.log('App Show')
     updateStoreData().getDate()
+    useGetUserInfo().getBomInfo()
   },
   onHide: function () {
     console.log('App Hide')

@@ -3,8 +3,10 @@
       :class="['externalBox',scrollFlag?'fix-all':'']"
       :style="scrollFlag?`width:${widthScroll}px`:''"
   >
-    <Music></Music>
-    <personInfo v-if="menuStore.computedIsActive=='about-me'" v-model="userStore.userInfo"></personInfo>
+    <view>
+      <personInfo v-show="menuStore.computedIsActive=='about-me'" v-model="userStore.userInfo"></personInfo>
+      <Music ></Music>
+    </view>
   </view>
 </template>
 

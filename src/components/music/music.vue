@@ -1,5 +1,5 @@
 <template>
-  <view class="box">
+  <view class="box" v-show="!isRetract">
     <view class="wine-music-title">
       <image :src="musicData.al.picUrl" class="logo" mode="aspectFill"></image>
       <view class="theme" v-show="!musicLoading">
@@ -32,9 +32,9 @@
             @click="audioController('pause')"></view>
       <view class="iconfont icon-tingzhi" title="停止" @click="audioController('stop')"></view>
       <view class="iconfont icon-xiayishou" title="下一首" @click="audioController('next')"></view>
-      <view class="iconfont icon-dakai" title="打开列表" @click="audioController('open')"></view>
+<!--      <view class="iconfont icon-dakai" title="打开列表" @click="audioController('open')"></view>-->
+      <view class="iconfont icon-dakai" title="收起" @click="audioController('retract')"></view>
     </view>
-
     <view class="wine-music-list" v-show="musicListShow">
       <scroll-view
           :style="[musicLists.length>0?'height: 40vh':'','scrollbar-width:none']"
@@ -56,13 +56,25 @@
         </view>
       </scroll-view>
     </view>
-
-    <view class="wine-music-lyric" :style="musicLyric?'height: 40vh;':''">
-       <ul :style="`transform:translateY(-${offSet}px)`">
-         <li v-for="item in musicLyricList" :key="item.time">{{item.word}}</li>
+    <view
+        ref="wineMusicContainerLyric"
+        class="wine-music-lyric"
+        :style="musicLyric?'height: 40vh;':''"
+    >
+       <ul ref="wineMusicLyric" :style="[`transform:translateY(-${offSet}px)`]">
+         <li
+             v-for="(item,index) in musicLyricList"
+             :ref="'li'+playIndex"
+             :key="item"
+             :class="playIndex==index?'active':''"
+         >
+           {{item.word}}
+         </li>
        </ul>
     </view>
-
+  </view>
+  <view class="retract" v-show="isRetract" :title="'展开'" @click="audioController('expand')">
+    <image class="audio"   src="/static/icon/audio1.png"></image>
   </view>
 </template>
 
@@ -70,10 +82,15 @@
 import {onMounted, reactive, ref, nextTick} from "vue";
 import {secondToMinuteTime} from "@/util/util";
 import * as _ from "lodash";
-import loading from "../../uni_modules/Sansnn-uQRCode/components/w-loading/loading7";
+import loading from "@/uni_modules/Sansnn-uQRCode/components/w-loading/loading7";
 import * as marked from "marked";
 import {musicLyricFun} from "./lyric";
+import {api} from "@/http/http";
 
+/**
+ *  is 收起
+ */
+const isRetract =ref(false)
 /**
  * music控制器
  */
@@ -111,11 +128,13 @@ const audioController = (type = '') => {
       if (Timer.value) {
         clearInterval(Timer.value)
       }
-      for (const index in musicData ) {
-        if(musicData[index].active){
-          getMusicLyric(musicData[index].id)
+   /*   if(musicLyric.value){
+        for (const index in musicData ) {
+          if(musicData[index].active){
+            getMusicLyric(musicData[index].id)
+          }
         }
-      }
+      }*/
       Timer.value = setInterval(() => {
         startTimerOrder.value = startTimerOrder.value + 1
         endTimerOrder.value = endTimerOrder.value - 1
@@ -147,11 +166,13 @@ const audioController = (type = '') => {
       if (Timer.value) {
         clearInterval(Timer.value)
       }
-      for (const index in musicData ) {
-        if(musicData[index].active){
-          getMusicLyric(musicData[index].id)
+/*      if(musicLyric.value){
+        for (const index in musicData ) {
+          if(musicData[index].active){
+            getMusicLyric(musicData[index].id)
+          }
         }
-      }
+      }*/
       startTimerOrder.value = parseInt((parseInt(audio.duration) * pos.percentage) / 100)
       endTimerOrder.value = parseInt(parseInt(audio.duration) - startTimerOrder.value)
       Timer.value = setInterval(() => {
@@ -180,6 +201,12 @@ const audioController = (type = '') => {
     },
     'open':()=>{
       musicListShow.value = !musicListShow.value
+    },
+    'retract':()=>{
+      isRetract.value = true
+    },
+    'expand':()=>{
+      isRetract.value = false
     }
   }
   if (musicData.value['url']) {
@@ -206,7 +233,7 @@ const audioController = (type = '') => {
 let musicData = ref({
   startTime: '0:00',
   endTime: '0:00',
-  al:{name:'',picUrl:'/static/icon/headerico.png'},
+  al:{name:'暂无数据',picUrl:'/static/icon/headerico.png'},
   autoNextFlag: true,
 })
 /**
@@ -225,80 +252,48 @@ const musicLoading = ref(true);
  * 默认获取歌曲url
  * @param type
  */
-const getMusicUrl = (type = '') => {
+const getMusicUrl = () => {
 return new Promise(resolve => {
   musicLoading.value = true
-  uni.request({
-    url:'http://localhost:4000/song/url',
-    data:{
-      id:musicLists[0].id
-    },
-    success:({data})=>{
-      musicLoading.value = false
-      musicData.value = {...musicLists[0],...data.data[0]}
-      console.log(musicData.value)
-      audio.src = data.data[0].url
-      resolve()
-    }
+  api({
+    url:'/song/url',
+    data:{id:musicLists[0].id}
+  }).then(({data})=>{
+    console.log(data)
+    musicLoading.value = false
+    musicData.value = {...musicLists[0],...data[0]}
+    console.log(musicData.value)
+    audio.src = data[0].url
+    resolve()
+  }).catch(()=>{
+    musicLoading.value = false
   })
 })
-  /*uni.request({
-    url: 'https://dataiqs.com/api/netease/music/?type=random',
-    success: ({data}) => {
-      try {
-        if (data['data'].song_url.indexOf('/404') == -1) {
-          console.log(data['data'])
-          audio.src = data['data'].song_url
-          musicLoading.value = false
-          musicData.value = {...musicData.value, ...data['data']}
-          if (type === 'next') {
-            startTimerOrder.value = 0
-            endTimerOrder.value = 0
-            setTimeout(() => {
-              audioController('play')
-            }, 500)
-          }
-        } else {
-          getMusicUrl()
-        }
-      } catch (e) {
-        getMusicUrl()
-      }
-    }
-  })*/
 }
 /**
  * 获取歌区列表
  */
 const getMusicList = () =>{
   return new Promise(resolve => {
-    uni.request({
-    url:'http://localhost:4000/top/playlist/highquality',
-    data:{
-      cat:'流行'
-    },
-    success:({data})=>{
-      if(data.code===200){
-        console.log(data)
-        uni.request({
-          url:'http://localhost:4000/playlist/detail',
-          data:{
-            // 默认第一个歌单id
-            id:data.playlists[0].id
-          },
-          success:({data})=>{
-            console.log(data)
-            musicLists.length=0
-            musicLists.push(...data.playlist.tracks)
-            musicLists[0].active = true
-/*            playlists.length=0
-            playlists.push(...data.playlist.tracks)*/
-            resolve()
-          }
-        })
+    api({
+      url:'/top/playlist/highquality',
+      data:{
+        cat:'流行'
       }
-    }
-  })
+    }).then(({playlists})=>{
+      api({
+        url:'/playlist/detail',
+        data:{
+          // 默认第一个歌单id
+          id:playlists[0].id
+        }
+      }).then(({playlist})=>{
+        musicLists.length=0
+        musicLists.push(...playlist.tracks)
+        musicLists[0].active = true
+        resolve()
+      })
+    })
   })
 
 }
@@ -322,23 +317,19 @@ const getDetail = (item)=>{
     musicLists[index].active = false
   }
   item.active=true
-  uni.request({
-    url:'http://localhost:4000/song/url',
+  api({
+    url:'/song/url',
     data:{
       id:item.id
-    },
-    success:({data})=>{
-      console.log(data)
-      musicData.value = {...item,...data.data[0]}
-      startTimerOrder.value=0
-      endTimerOrder.value=0
-      console.log(startTimerOrder.value)
-      console.log(endTimerOrder.value)
-      audio.src = data.data[0].url
-      setTimeout(()=>{
-        audioController('play')
-      },500)
     }
+  }).then(({data})=>{
+    musicData.value = {...item,...data[0]}
+    startTimerOrder.value=0
+    endTimerOrder.value=0
+    audio.src = data[0].url
+    setTimeout(()=>{
+      audioController('play')
+    },500)
   })
 }
 /**
@@ -353,21 +344,20 @@ const nextGetMusicUrl = ()=>{
     }
   }
   musicLists[index]['active'] = true
-  uni.request({
-    url:'http://localhost:4000/song/url',
+  api({
+    url:'/song/url',
     data:{
       id:musicLists[index].id
-    },
-    success:({data})=>{
-      console.log(data)
-      musicData.value = {...musicLists[index],...data.data[0]}
-      startTimerOrder.value=0
-      endTimerOrder.value=0
-      audio.src = data.data[0].url
-      setTimeout(()=>{
-        audioController('play')
-      },500)
     }
+  }).then(({data})=>{
+    resetLyric(data[0].id)
+    musicData.value = {...musicLists[index],...data[0]}
+    startTimerOrder.value=0
+    endTimerOrder.value=0
+    audio.src = data[0].url
+    setTimeout(()=>{
+      audioController('play')
+    },500)
   })
 }
 /**
@@ -390,21 +380,20 @@ const previousGetMusicUrl = ()=>{
     return
   }
   musicLists[index]['active'] = true
-  uni.request({
-    url:'http://localhost:4000/song/url',
+  api({
+    url:'/song/url',
     data:{
       id:musicLists[index].id
-    },
-    success:({data})=>{
-      console.log(data)
-      musicData.value = {...musicLists[index],...data.data[0]}
-      startTimerOrder.value=0
-      endTimerOrder.value=0
-      audio.src = data.data[0].url
-      setTimeout(()=>{
-        audioController('play')
-      },500)
     }
+  }).then(({data})=>{
+    resetLyric(data[0].id)
+    musicData.value = {...musicLists[index],...data[0]}
+    startTimerOrder.value=0
+    endTimerOrder.value=0
+    audio.src = data[0].url
+    setTimeout(()=>{
+      audioController('play')
+    },500)
   })
 }
 
@@ -415,15 +404,11 @@ const previousGetMusicUrl = ()=>{
 const musicLyric = ref('')
 const musicLyricList = reactive([])
 const getMusicLyric = (id)=>{
-  uni.request({
-    url:'http://localhost:4000/lyric',
-    data:{
-      id
-    },
-    success:({data})=>{
-      console.log(data)
-      musicLyric.value = data.lrc.lyric
-    }
+  api({
+    url:'/lyric',
+    data:{id}
+  }).then(({lrc})=>{
+    musicLyric.value=lrc.lyric
   })
 }
 /**
@@ -431,51 +416,81 @@ const getMusicLyric = (id)=>{
  * @param result
  */
 const offSet = ref(0)
+const playIndex = ref(0)
+const wineMusicLyric= ref(null)
+const wineMusicContainerLyric= ref(null)
 const setOffset = (result) =>{
-  let liHeight = document.querySelector('ul').children[0].clientHeight;
-  let containerHeight = document.querySelector(".wine-music-lyric").clientHeight;
-  let minOffset = 0;
-  let maxOffset = liHeight - containerHeight;
-  const getIndex = () =>{
-    let Time = startTimerOrder.value;
-    for (let i = 0; i < result.length; i++) {
-      if (result[i].time > Time) {
-        return i - 1;
+  if(wineMusicLyric.value.children.length){
+    let liHeight = wineMusicLyric.value.children[0].clientHeight;
+    let containerHeight = wineMusicContainerLyric.value.$el.clientHeight;
+    let minOffset = 0;
+    let maxOffset =  containerHeight-liHeight ;
+    const getIndex = () =>{
+      let Time = startTimerOrder.value;
+      for (let i = 0; i < result.length; i++) {
+        if (result[i].time > Time) {
+          return i - 1;
+        }
       }
     }
+    playIndex.value =  getIndex();
+
+    // 计算滚动距离
+    offSet.value = liHeight * playIndex.value - containerHeight / 2 + liHeight / 2;
+   /* if (offSet.value < minOffset) {
+      offSet.valuet = minOffset;
+    }
+    if (offSet.value > maxOffset) {
+      offSet.value = maxOffset;
+    }*/
+    console.log(offSet.value)
   }
-  let index = getIndex();
-  // 计算滚动距离
-  offSet.value = liHeight * index - containerHeight / 2 + liHeight / 2;
-  if (offSet.value < minOffset) {
-    offSet.valuet = minOffset;
-  }
-  if (offSet.value > maxOffset) {
-    offSet.value = maxOffset;
-  }
-  // 滚动
-  // document.querySelector('ul').style.transform = `translateY(-${offset}px)`;
-  console.log(offSet)
-  // 清除之前的active
-  let li = document.querySelector('ul').querySelector(".active")
-  if (li) {
-    li.classList.remove("active");
-  }
-  // 为当前所唱到的歌词添加active
-  li = document.querySelector('ul').children[index];
-  if (li) {
-    li.classList.add("active");
-  }
+}
+/**
+ * 重置歌词
+ */
+const resetLyric = (id) =>{
+  offSet.value = 0
+  musicLyric.value=''
+  musicLyricList.length=0
+  getMusicLyric(id)
 }
 onMounted(async () => {
   await getMusicList()
   await getMusicUrl()
-
   window.addEventListener('onmouseup', musicMouseUp)
 })
 </script>
 
 <style scoped lang="scss">
+@keyframes auto {
+  0% {
+
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.retract{
+  position: fixed;
+  top: 180rpx;
+  left: 20rpx;
+  //top:30vh;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 20rpx;
+  box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
+  padding: 10rpx;
+  overflow: hidden;
+  cursor: pointer;
+  z-index: 9999;
+  .audio{
+    width: 100%;
+    height: 100%;
+    animation: auto 2s linear infinite;
+
+  }
+}
 .box {
   padding: 50rpx;
   margin-bottom: 50rpx;
@@ -589,6 +604,7 @@ onMounted(async () => {
     }
   }
   .wine-music-lyric{
+    margin-top: 20rpx;
     overflow: hidden;
     ul{
       list-style: none;
@@ -601,9 +617,9 @@ onMounted(async () => {
         line-height: 50rpx;
       }
       .active{
-        transform: scale(1.3); // 歌词放大效果
-        color: #fff;
-        background: rgba(60, 197, 31, 0.62);
+        transform: scale(1.5); // 歌词放大效果
+        color: #e8bebe;
+        //background: #e8bebe;
       }
     }
   }
