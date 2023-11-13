@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "37684156",
+      "name": "敏感词",
+      "font_class": "minganci",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
       "icon_id": "122304",
       "name": "表情",
       "font_class": "biaoqing",

@@ -1,7 +1,7 @@
 <template>
 <view class="externalBox">
   <say />
-  <view class="balabala">
+  <view class="balabala" v-for="item in contentList">
     <image class="head-sculpture" src="/static/icon/headerico.png" mode="aspectFill" />
     <view>
       <view class="header">
@@ -9,15 +9,15 @@
           <h2>Wine</h2>
           <view class="time">
             <uni-dateformat :title="'2020/10/20 20:20:20'" :date="'2020/10/20 20:20:20'" :threshold="[[60000, 3600000]]"></uni-dateformat>
-            <view style="margin-left: 30rpx">来自：{{ip.country=='中国'?'':ip.country}}{{ip.prov}}</view>
+            <view style="margin-left: 30rpx">来自：{{item.ip.country=='中国'?'':item.ip.country}}{{item.ip.prov}}</view>
           </view>
         </view>
       </view>
       <view class="content">
-        <view>
-          俄士兵被乌军炸断腿，无奈饮弹自尽。
+        <view v-if="item" >
+          <render :item=item></render>
         </view>
-
+        <view></view>
       </view>
     </view>
   </view>
@@ -26,27 +26,50 @@
 
 <script setup>
 import {onLoad} from '@dcloudio/uni-app'
-import {computed, onMounted, provide, reactive, ref} from "vue";
+import {computed, onMounted, provide, reactive, ref, h} from "vue";
 import {useGetUserInfo} from "@/store/useGetUserInfo";
 import say from './components/say.vue'
+import {emojiDictionary} from './components/emoji'
+import huangLian from '@/static/emoji/huanglian.vue'
 
 const store = useGetUserInfo()
 
-const ip = ref({})
-const getIp = ()=>{
-  uni.request({
-    url:'https://qifu-api.baidubce.com/ip/local/geo/v1/district?',
-    success:({data})=>{
-      ip.value = data.data
-      console.log(ip)
-    }
-  })
+const contentList = reactive([])
+
+const render = (props) =>{
+  let reg = /\[(.+?)\]/g
+  return h(
+      'div',
+      {},
+        [
+          props.item.value.split(reg).map(item=>{
+            if(emojiDictionary.includes(`[${item}]`)){
+              return  h(huangLian,{
+                modelValue:item
+              })
+            }else{
+              return item
+            }
+          }),
+        ]
+      )
 }
 
+const getContentList = () =>{
+  uniCloud.callFunction({
+    name:'getSayList'
+  }).then(({result})=>{
+    contentList.length = 0
+    contentList.push(...result.data)
+  })
+}
 onLoad(({name})=>{
   uni.setNavigationBarTitle({
     title: name
   })
+})
+onMounted(()=>{
+  getContentList()
 })
 
 

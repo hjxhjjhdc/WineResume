@@ -20,7 +20,7 @@
 		},
 		{
 			"path": "uni_modules/uni-id-pages/pages/register/register"
-		},
+		}
 	],
 	"topWindow": {
 		"path": "components/layout/top-layout",

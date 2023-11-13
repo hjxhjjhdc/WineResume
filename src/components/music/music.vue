@@ -1,10 +1,14 @@
 <template>
   <view class="box" v-show="!isRetract">
     <view class="wine-music-title">
-      <image :src="musicData.al.picUrl" class="logo" mode="aspectFill"></image>
+      <image :src="musicData.picUrl" class="logo" mode="aspectFill"></image>
       <view class="theme" v-show="!musicLoading">
         <view class="title" :title="musicData.name">{{ musicData.name }}</view>
-        <view class="author">{{ musicData.al.name }}</view>
+        <view class="author">
+          <text v-for="item in musicData.song.artists">
+            {{ item.name }}
+          </text>
+        </view>
       </view>
       <view style="cursor: pointer" @click="audioController('open')">more</view>
       <view class="more" v-show="musicListShow">
@@ -21,11 +25,15 @@
                 :class="['wine-music-list-item',item.active?'wine-music-list-item-active':'']"
                 @click="getDetail(item)">
               <view>
-                <image :src="item.al.picUrl" class="wine-music-list-item-logo"  mode="aspectFill"></image>
+                <image :src="item.picUrl" class="wine-music-list-item-logo"  mode="aspectFill"></image>
               </view>
               <view>
                 <view>{{item.name}}</view>
-                <view>{{item.al.name}}</view>
+                <view>
+                  <text v-for="i in item.song.artists">
+                    {{i.name}}
+                  </text>
+                </view>
               </view>
             </view>
           </scroll-view>
@@ -57,10 +65,11 @@
             @click="audioController('pause')"></view>
       <view class="iconfont icon-tingzhi" title="停止" @click="audioController('stop')"></view>
       <view class="iconfont icon-xiayishou" title="下一首" @click="audioController('next')"></view>
-<!--      <view class="iconfont icon-dakai" title="打开列表" @click="audioController('open')"></view>-->
+      <view class="iconfont icon-minganci" title="歌词" @click="audioController('words')"></view>
       <view class="iconfont icon-dakai" title="收起" @click="audioController('retract')"></view>
     </view>
     <view
+        v-show="musicLyricShow"
         ref="wineMusicContainerLyric"
         class="wine-music-lyric"
         :style="musicLyric?'height: 40vh;':''"
@@ -70,7 +79,7 @@
              v-for="(item,index) in musicLyricList"
              :ref="'li'+playIndex"
              :key="item"
-             :class="playIndex==index?'active':''"
+             :class="[playIndex==index?String(item.word).split('').length>14?'active move':'active':'']"
          >
            {{item.word}}
          </li>
@@ -123,6 +132,7 @@ const musicMouseUp = (e) => {
 const audioController = (type = '') => {
   const typeStrategy = {
     'play': () => {
+      getMusicLyric(musicData.value.id)
       playFlag.value = true
       audio.play()
       console.log(audio.duration)
@@ -197,6 +207,9 @@ const audioController = (type = '') => {
     },
     'expand':()=>{
       isRetract.value = false
+    },
+    'words':()=>{
+      musicLyricShow.value = !musicLyricShow.value
     }
   }
   if (musicData.value['url']) {
@@ -205,7 +218,6 @@ const audioController = (type = '') => {
       if (musicData.value.autoNextFlag) {
         musicData.value.autoNextFlag = false
         clearInterval(Timer.value)
-        // getMusicUrl('next')
         nextGetMusicUrl()
       }
     })
@@ -223,7 +235,7 @@ const audioController = (type = '') => {
 let musicData = ref({
   startTime: '0:00',
   endTime: '0:00',
-  al:{name:'暂无数据',picUrl:'/static/icon/headerico.png'},
+  song:{artists:[]},
   autoNextFlag: true,
 })
 /**
@@ -242,22 +254,33 @@ const musicLoading = ref(true);
  * 默认获取歌曲url
  * @param type
  */
-const getMusicUrl = () => {
+const getMusicUrl = (index) => {
 return new Promise(resolve => {
   musicLoading.value = true
   api({
-    url:'/song/url',
-    data:{id:musicLists[0].id}
-  }).then(({data})=>{
-    console.log(data)
-    musicLoading.value = false
-    musicData.value = {...musicLists[0],...data[0]}
-    console.log(musicData.value)
-    audio.src = data[0].url
-    resolve()
-  }).catch(()=>{
-    musicLoading.value = false
+    url:'/check/music',
+    data: {id:musicLists[index].id}
+  }).then(({success,message})=>{
+    if(success){
+      api({
+        url:'/song/url',
+        data:{id:musicLists[index].id}
+      }).then(({data})=>{
+        console.log(data)
+        musicLoading.value = false
+        musicData.value = {...musicLists[0],...data[0]}
+        console.log(musicData.value)
+        audio.src = data[0].url
+        resolve()
+      }).catch(()=>{
+        getMusicUrl(index+1)
+        musicLoading.value = false
+      })
+    }else{
+
+    }
   })
+
 })
 }
 /**
@@ -266,11 +289,19 @@ return new Promise(resolve => {
 const getMusicList = () =>{
   return new Promise(resolve => {
     api({
-      url:'/top/playlist/highquality',
+      // url:'/top/playlist/highquality',
+      url:'/personalized/newsong',
       data:{
-        cat:'流行'
+        // cat:'流行'
       }
-    }).then(({playlists})=>{
+    }).then(({result})=>{
+      musicLists.length=0
+      musicLists.push(...result)
+      musicLists[0].active = true
+      resolve()
+    })
+
+       /* .then(({playlists})=>{
       api({
         url:'/playlist/detail',
         data:{
@@ -283,7 +314,7 @@ const getMusicList = () =>{
         musicLists[0].active = true
         resolve()
       })
-    })
+    })*/
   })
 
 }
@@ -349,6 +380,8 @@ const nextGetMusicUrl = ()=>{
     setTimeout(()=>{
       audioController('play')
     },500)
+  }).catch(()=>{
+    nextGetMusicUrl()
   })
 }
 /**
@@ -393,6 +426,7 @@ const previousGetMusicUrl = ()=>{
  * @param id
  */
 const musicLyric = ref('')
+const musicLyricShow = ref(false)
 const musicLyricList = reactive([])
 const getMusicLyric = (id)=>{
   api({
@@ -411,6 +445,7 @@ const playIndex = ref(0)
 const wineMusicLyric= ref(null)
 const wineMusicContainerLyric= ref(null)
 const setOffset = (result) =>{
+  // console.log(result)
   if(wineMusicLyric.value.children.length){
     let liHeight = wineMusicLyric.value.children[0].clientHeight;
     let containerHeight = wineMusicContainerLyric.value.$el.clientHeight;
@@ -448,7 +483,7 @@ const resetLyric = (id) =>{
 }
 onMounted(async () => {
   await getMusicList()
-  await getMusicUrl()
+  await getMusicUrl(0)
   window.addEventListener('onmouseup', musicMouseUp)
 })
 </script>
@@ -460,6 +495,14 @@ onMounted(async () => {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+@keyframes move {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }
 .retract{
@@ -625,11 +668,15 @@ onMounted(async () => {
         color: #666;
         height: 50rpx;
         line-height: 50rpx;
+        white-space: nowrap;
       }
       .active{
-        transform: scale(1.5); // 歌词放大效果
+        scale:1.2; // 歌词放大效果
         color: #e8bebe;
         //background: #e8bebe;
+      }
+      .move{
+        //animation: move  5s  0.5s linear infinite;
       }
     }
   }

@@ -1,0 +1,7 @@
+{
+  "name": "getSayList",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

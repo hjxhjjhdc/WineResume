@@ -15,17 +15,20 @@ export const api = ({url,method='get',header='',data=null}) => {
             method,
             header,
             success: ({data, statusCode}) => {
+                let msg = data.message||'诶呀，网络请求错误~ 请稍后重试~'
                 if (statusCode == 200) {
                     resolve(data)
                 }else{
+                    console.log(data)
                     uni.showToast({
-                        title:'诶呀，网络请求错误~ 请稍后重试~',
+                        title:msg,
                         icon:'none'
                     })
                     reject({data,statusCode})
                 }
             },
             fail: (rej) => {
+                console.log(rej)
                 uni.showToast({
                     title:'诶呀，网络请求错误~ 请稍后重试~',
                     icon:'none'
