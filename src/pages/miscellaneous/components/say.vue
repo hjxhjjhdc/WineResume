@@ -28,17 +28,18 @@
             <view :class="['input-controller-item']" @click="inputButton('emoji')">
               <view class="iconfont icon-biaoqing"></view>
               <view>表情</view>
-              <div class="emoji" v-show="emojiShow" @blur="inputButton('closeEmoji')">
-                <scroll-view
-                    style="height: 100%;"
-                    :scroll-y="true"
-                    :show-scrollbar="false"
-                >
-                  <view v-for="item in emojiList" :title="item.name" class="emoji-item" @click.stop="emojiSelected(item.name)">
-                    <huangLian v-model="item.name"></huangLian>
-                  </view>
-                </scroll-view>
-              </div>
+                <div class="emoji" v-show="emojiShow" @blur="inputButton('closeEmoji')">
+                  <scroll-view
+                      style="height: 100%;"
+                      :scroll-y="true"
+                      :show-scrollbar="false"
+                  >
+  <!--                  <view @click="inputButton('closeEmoji')">x</view>-->
+                    <view v-for="item in emojiList" :title="item.name" class="emoji-item" @click.stop="emojiSelected(item.name)">
+                      <huangLian v-model="item.name"></huangLian>
+                    </view>
+                  </scroll-view>
+                </div>
             </view>
             <view :class="['input-controller-item']" @click="inputButton('image')">
               <view class="iconfont icon-icon"></view>
@@ -61,11 +62,45 @@
             </view>
           </view>
           <view class="input-controller-button">
-            <view :class="['btn', computedBtnDisabled?'enabled':'disabled']" @click="send">发送</view>
+            <view :class="['btn', computedBtnDisabled?'enabled':'disabled']" @click="openPopup('popup')">发送</view>
           </view>
         </view>
       </view>
     </uni-forms>
+<!--    发送时弹窗-->
+    <uni-popup ref="popup" :mask-click="false">
+        <uni-forms ref="popupForm" :modelValue="popupFormData">
+          <view class="popup-box">
+            <view class="content-headSculpture">
+              <view class="headSculpture" title="选择头像" @click="replaceHead('replace')">
+                <image :src="popupFormData.imageUrl" style="width: 100%;height: 100%" mode="aspectFill"></image>
+<!--                <view>Tip:</view>-->
+              </view>
+              <view  class="headSculptureList">
+                <view v-for="item in headImageList" class="headSculptureListItem" @click="replaceHead(item)">
+                  <image :src="item" style="width: 100%;height: 100%" mode="aspectFill"></image>
+                </view>
+              </view>
+            </view>
+            <view class="content-name">
+              <view class="label">昵称：</view>
+              <uni-easyinput
+                  type="text"
+                  :trim="true"
+                  :maxlength="10"
+                  :clearable="false"
+                  v-model="popupFormData.name"
+                  placeholder="阿巴阿巴阿巴······"
+              >
+              </uni-easyinput>
+            </view>
+            <view class="foot-btn">
+              <view class="btn-item" @click="handlePopup('send')">确定</view>
+              <view class="btn-item" @click="handlePopup('close')">关闭</view>
+            </view>
+          </view>
+        </uni-forms>
+    </uni-popup>
   </view>
 </template>
 
@@ -73,8 +108,86 @@
 import {computed, onMounted, reactive, ref} from "vue";
 import huangLian  from '@/static/emoji/huanglian.vue'
 import htzImageUpload from '@/components/htz-image-upload/htz-image-upload.vue'
-
 import  emojiModel from './emoji'
+import {useTouristInfo} from "@/store/useTouristInfo";
+import {useIp} from "@/store/useIp";
+import {generateUUID} from "@/util/util";
+
+const emit = defineEmits(['send'])
+/**
+ * popup
+ */
+const touristStore =useTouristInfo()
+const popup =ref()
+const openPopup =(type='popup') =>{
+  const dict ={
+    'popup':()=>{
+      if(touristStore.touristInfo){
+        console.log('存在')
+        send()
+      }else{
+        popupFormData.uuid= generateUUID()
+        popup.value.open('center')
+      }
+    },
+  }
+  dict[type]()
+}
+const popupForm = ref()
+const popupFormData =reactive({
+  imageUrl:'/static/headSculpture/1.png',
+  ...touristStore.touristInfo
+})
+/**
+ * 头像list
+ */
+const headImageList = reactive([
+  '/static/headSculpture/1.png',
+  '/static/headSculpture/2.png',
+  '/static/headSculpture/3.png',
+  '/static/headSculpture/4.png',
+  '/static/headSculpture/5.png',
+  '/static/headSculpture/6.png',
+  '/static/headSculpture/7.png',
+  '/static/headSculpture/8.png',
+  '/static/headSculpture/9.png',
+  '/static/headSculpture/10.png',
+])
+const replaceHead = (item) =>{
+  console.log(item)
+  if(item==='replace'){
+   // todo 选择本地文件
+   /* uni.chooseImage({
+      success:(res)=>{
+        console.log(res)
+        popupFormData.imageUrl = res.tempFilePaths[0]
+      }
+    })*/
+  }else{
+   popupFormData.imageUrl = item
+  }
+}
+const handlePopup =(type)=>{
+  const dict ={
+    'send':()=>{
+      if(popupFormData.name){
+        console.log('存在')
+        handlePopup('close')
+        send()
+      }else{
+        console.log('不存在')
+        uni.showToast({
+          title:'请填写昵称~',
+          icon:"none"
+        })
+      }
+    },
+    'close':()=>{
+      popup.value.close()
+    }
+  }
+  dict[type]()
+}
 /**
  * 表单
  * @type {UnwrapNestedRefs<{value: string}>}
@@ -96,12 +209,15 @@ const uploadFile = () =>{
   return new Promise((resolve, reject) => {
     for (const item of imageList) {
       uniCloud.uploadFile({
-        filePath:item.filePath,
+        filePath:item.url,
         cloudPath: item.cloudPath,
         fileType: item.fileType
       }).then(res=>{
         console.log(res)
-        baseFormData.imageList.push(res.fileID)
+        baseFormData.imageList.push({
+          fileType: item.fileType,
+          url:res.fileID
+        })
         resolve(res)
       }).catch(rej=>{
         reject(rej)
@@ -109,36 +225,32 @@ const uploadFile = () =>{
     }
   })
 }
-const getIp = () =>{
-  return new Promise((resolve, reject) => {
-    uni.request({
-      url:'https://qifu-api.baidubce.com/ip/local/geo/v1/district?',
-      success:({data})=>{
-        baseFormData.ip = data.data
-        console.log(baseFormData)
-        resolve()
-      },
-      fail:(rej)=>{
-        reject(rej)
-      }
-    })
-  })
-}
+const ipStore = useIp()
+
 const send = async () =>{
+  uni.showLoading({
+    mask:true
+  })
   if(!!baseFormData.value){
 
     try {
-      await uploadFile()
-      await getIp()
-      console.log(baseFormData)
+      if(imageList.length>0){
+        await uploadFile()
+      }
+      baseFormData.ip = ipStore.ip.data
+      popupFormData.touristIp = ipStore.ip.ip
       uniCloud.callFunction({
         name: 'addSay',
         data:{
-          data:baseFormData
+          data:baseFormData,
+          touristData:popupFormData
         }
       }).then((res)=>{
         console.log(res)
+        touristStore.setTouristInfo(popupFormData)
         initFormData()
+        uni.hideLoading()
+        emit('send')
       })
     }catch (e) {
       console.log(e)
@@ -318,5 +430,72 @@ onMounted(()=>{
 ::v-deep .uni-scroll-view-content{
   display: flex;
   flex-wrap: wrap;
+}
+.popup-box{
+  background: white;
+  border-radius: 20rpx;
+  width: 1500rpx;
+  height: 500rpx;
+  overflow: hidden;
+  padding: 50rpx;
+  .content-headSculpture{
+    position: relative;
+    display: flex;
+    .headSculpture{
+      cursor: pointer;
+      width: 150rpx;
+      height: 150rpx;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 20rpx;
+    }
+    .headSculptureList{
+      background: white;
+      border-radius: 20rpx;
+      width: 90%;
+      height: 100rpx;
+      overflow: hidden;
+      padding: 20rpx;
+      box-shadow: 3rpx 3rpx 15rpx rgba(136, 136, 136, 0.5);
+      display: flex;
+      flex-wrap: wrap;
+      .headSculptureListItem{
+        margin-right: 20rpx;
+        width: 105rpx;
+        height: 105rpx;
+        overflow: hidden;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    }
+  }
+  .content-name{
+    display: flex;
+    align-items: center;
+    margin-top: 50rpx;
+    .label{
+      width: 150rpx;
+      text-align: right;
+    }
+    ::v-deep .is-focused{
+      border:1px solid #dcdfe6 !important;
+    }
+  }
+  .foot-btn{
+    position: absolute;
+    display: flex;
+    bottom: 50rpx;
+    right: 50rpx;
+    .btn-item{
+      margin-right: 20rpx;
+      padding: 10rpx 20rpx;
+      cursor: pointer;
+      &:hover{
+        background: #e8a4a4;
+        border-radius: 20rpx;
+        color: white;
+      }
+    }
+  }
 }
 </style>

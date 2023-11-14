@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "8289011",
+      "name": "删除",
+      "font_class": "shanchu",
+      "unicode": "e86d",
+      "unicode_decimal": 59501
+    },
+    {
+      "icon_id": "6548541",
+      "name": "评论",
+      "font_class": "pinglun",
+      "unicode": "e658",
+      "unicode_decimal": 58968
+    },
+    {
+      "icon_id": "11428247",
+      "name": "点赞-01",
+      "font_class": "dianzan-",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
       "icon_id": "37684156",
       "name": "敏感词",
       "font_class": "minganci",
