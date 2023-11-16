@@ -1,10 +1,25 @@
+<template>
+  <uni-popup>
+    <loading13 v-if="loading"></loading13>
+  </uni-popup>
+</template>
 <script>
 import {updateStoreData} from '@/store/updateStoreData'
 import {useGetUserInfo} from '@/store/useGetUserInfo'
 import uniIdPageInit from '@/uni_modules/uni-id-pages/init.js';
 import {useIp} from "@/store/useIp";
 import {useUUID} from "@/store/useUUID";
+import loading13 from "@/uni_modules/Sansnn-uQRCode/components/w-loading/loading13";
 export default {
+  data(){
+    return{
+      loading:true
+    }
+  },
+  components: {loading13},
+  onLoad:()=>{
+    this.loading=false
+  },
   onLaunch:async  function () {
     console.log('App Launch')
     await uniIdPageInit()

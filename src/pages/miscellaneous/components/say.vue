@@ -34,6 +34,7 @@
                       :scroll-y="true"
                       :show-scrollbar="false"
                   >
+                    <input type="text" style="width: 0;height: 0" focus ref="emojiRef" @blur="inputButton('closeEmoji')">
   <!--                  <view @click="inputButton('closeEmoji')">x</view>-->
                     <view v-for="item in emojiList" :title="item.name" class="emoji-item" @click.stop="emojiSelected(item.name)">
                       <huangLian v-model="item.name"></huangLian>

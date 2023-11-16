@@ -3,7 +3,7 @@
   <say @send="getContentList"/>
   <view class="balabala" v-for="item in contentList">
     <image class="head-sculpture" :src="item.touristData.imageUrl" mode="aspectFill" />
-    <view>
+    <view style="width: 100%">
       <view class="header">
         <view>
           <h2>{{ item.touristData.name }}</h2>
@@ -77,6 +77,19 @@
           </view>
         </view>
       </view>
+      <view class="comment">
+        <view>
+          <uni-easyinput
+              type="textarea"
+              autoHeight
+              :trim="true"
+              :maxlength="-1"
+              v-model="value"
+              placeholder="阿巴阿巴阿巴······"
+          >
+          </uni-easyinput>
+        </view>
+      </view>
     </view>
   </view>
   <view class="loading" v-show="loadingFlag">
@@ -142,16 +155,20 @@ const handleBtn =(item,type='')=>{
     'comment':()=>{},
     'like':()=>{
       let flag = 'remove'
-      if(item.likeUser.indexOf(uuidStore.uuid)===-1){
-        flag='add'
-        item.likeUser.push(uuidStore.uuid)
-        item.like +=1
-      }else{
-        item.likeUser = item.likeUser.filter((item)=>{
-          return item!==uuidStore.uuid
-        })
-        item.like -=1
+      if(!item.like){
+        item.likeUser = []
+        item.like = 0
       }
+        if(item.likeUser.indexOf(uuidStore.uuid)===-1){
+          flag='add'
+          item.likeUser.push(uuidStore.uuid)
+          item.like +=1
+        }else{
+          item.likeUser = item.likeUser.filter((item)=>{
+            return item!==uuidStore.uuid
+          })
+          item.like -=1
+        }
       uniCloud.callFunction({
         name:'addLike',
         data:{
@@ -254,6 +271,13 @@ onReachBottom(()=>{
           scale: 1.2;
           color: #e8bebe;
         }
+      }
+    }
+    .comment{
+      width: 100%;
+      margin-top: 30rpx;
+      ::v-deep .is-focused{
+        border:1px solid #dcdfe6 !important;
       }
     }
   }
