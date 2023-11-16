@@ -1,0 +1,7 @@
+{
+  "name": "uuid",
+  "dependencies": {},
+  "extensions": {
+    "uni-cloud-jql": {}
+  }
+}

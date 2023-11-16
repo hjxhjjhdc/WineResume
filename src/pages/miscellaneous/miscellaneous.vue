@@ -46,17 +46,33 @@
       </view>
       <view class="handle">
         <view class="handleBtn">
-          <view class="iconfont icon-dianzan-" title="点赞" @click="handleBtn('like')"></view>
+          <text>{{item.like||0}}</text>
+          <view
+              :class="[
+                  item.likeUser?item.likeUser.indexOf(uuidStore.uuid)===-1?'':'active':'',
+                  'iconfont',
+                  'icon-dianzan-'
+                  ]"
+              title="点赞"
+              @click="handleBtn(item,'like')"
+          >
+          </view>
         </view>
         <view class="handleBtn">
-          <view class="iconfont icon-pinglun" title="评论" @click="handleBtn('comment')"></view>
+          <text>{{item.comment||0}}</text>
+          <view
+              class="iconfont icon-pinglun"
+              title="评论"
+              @click="handleBtn(item,'comment')"
+          >
+          </view>
         </view>
         <view class="handleBtn">
           <view
               v-if="touristStore.touristInfo?touristStore.touristInfo.uuid ===item.touristData.uuid:false"
               class="iconfont icon-shanchu"
               title="删除"
-              @click="handleBtn('remove')"
+              @click="handleBtn(item,'remove')"
           >
           </view>
         </view>
@@ -78,8 +94,10 @@ import {emojiDictionary} from './components/emoji'
 import huangLian from '@/static/emoji/huanglian.vue'
 import loading from "@/uni_modules/Sansnn-uQRCode/components/w-loading/loading13";
 import {useTouristInfo} from "@/store/useTouristInfo";
+import {useUUID} from "@/store/useUUID";
 
 const store = useGetUserInfo()
+const uuidStore = useUUID()
 
 const contentList = reactive([])
 
@@ -119,10 +137,31 @@ const getContentList = (type) =>{
   })
 }
 
-const handleBtn =(type='')=>{
+const handleBtn =(item,type='')=>{
   const typeDict ={
     'comment':()=>{},
-    'like':()=>{},
+    'like':()=>{
+      let flag = 'remove'
+      if(item.likeUser.indexOf(uuidStore.uuid)===-1){
+        flag='add'
+        item.likeUser.push(uuidStore.uuid)
+        item.like +=1
+      }else{
+        item.likeUser = item.likeUser.filter((item)=>{
+          return item!==uuidStore.uuid
+        })
+        item.like -=1
+      }
+      uniCloud.callFunction({
+        name:'addLike',
+        data:{
+          id:item._id,
+          uuid:uuidStore.uuid,
+          type:flag
+        }
+      }).then(res=>{
+      })
+    },
     'remove':()=>{
       uni.showModal({
         title: '提示',
@@ -203,11 +242,17 @@ onReachBottom(()=>{
         margin-right: 25rpx;
         cursor: pointer;
         font-size: 30rpx;
+        display: flex;
+        align-items: center;
         .iconfont{
           &:hover{
             scale: 1.2;
             color: #e8bebe;
           }
+        }
+        .active{
+          scale: 1.2;
+          color: #e8bebe;
         }
       }
     }

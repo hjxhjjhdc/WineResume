@@ -111,7 +111,7 @@ import htzImageUpload from '@/components/htz-image-upload/htz-image-upload.vue'
 import  emojiModel from './emoji'
 import {useTouristInfo} from "@/store/useTouristInfo";
 import {useIp} from "@/store/useIp";
-import {generateUUID} from "@/util/util";
+import {useUUID} from "@/store/useUUID";
 
 const emit = defineEmits(['send'])
 /**
@@ -126,7 +126,7 @@ const openPopup =(type='popup') =>{
         console.log('存在')
         send()
       }else{
-        popupFormData.uuid= generateUUID()
+        popupFormData.uuid= useUUID().uuid
         popup.value.open('center')
       }
     },

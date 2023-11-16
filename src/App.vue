@@ -3,11 +3,13 @@ import {updateStoreData} from '@/store/updateStoreData'
 import {useGetUserInfo} from '@/store/useGetUserInfo'
 import uniIdPageInit from '@/uni_modules/uni-id-pages/init.js';
 import {useIp} from "@/store/useIp";
+import {useUUID} from "@/store/useUUID";
 export default {
   onLaunch:async  function () {
     console.log('App Launch')
     await uniIdPageInit()
     await useIp().setIp()
+    await useUUID().setUUID()
   },
   onShow: function () {
     console.log('App Show')
