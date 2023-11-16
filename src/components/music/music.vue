@@ -100,6 +100,7 @@ import * as marked from "marked";
 import {musicLyricFun} from "./lyric";
 import {api} from "@/http/http";
 
+const emit = defineEmits(['isRetract'])
 /**
  *  is 收起
  */
@@ -204,9 +205,11 @@ const audioController = (type = '') => {
     },
     'retract':()=>{
       isRetract.value = true
+      emit('isRetract',isRetract.value)
     },
     'expand':()=>{
       isRetract.value = false
+      emit('isRetract',isRetract.value)
     },
     'words':()=>{
       musicLyricShow.value = !musicLyricShow.value
@@ -252,7 +255,7 @@ const playFlag = ref(false);
 const musicLoading = ref(true);
 /**
  * 默认获取歌曲url
- * @param type
+ * @param index
  */
 const getMusicUrl = (index) => {
 return new Promise(resolve => {
@@ -263,8 +266,8 @@ return new Promise(resolve => {
   }).then(({success,message})=>{
     if(success){
       api({
-        url:'/song/url',
-        data:{id:musicLists[index].id}
+        url:'/song/url/v1',
+        data:{id:musicLists[index].id,level:'lossless'}
       }).then(({data})=>{
         console.log(data)
         musicLoading.value = false
@@ -339,9 +342,9 @@ const getDetail = (item)=>{
   }
   item.active=true
   api({
-    url:'/song/url',
+    url:'/song/url/v1',
     data:{
-      id:item.id
+      id:item.id,level:'lossless'
     }
   }).then(({data})=>{
     resetLyric(data[0].id)
@@ -367,9 +370,9 @@ const nextGetMusicUrl = ()=>{
   }
   musicLists[index]['active'] = true
   api({
-    url:'/song/url',
+    url:'/song/url/v1',
     data:{
-      id:musicLists[index].id
+      id:musicLists[index].id,level:'lossless'
     }
   }).then(({data})=>{
     resetLyric(data[0].id)
@@ -405,9 +408,9 @@ const previousGetMusicUrl = ()=>{
   }
   musicLists[index]['active'] = true
   api({
-    url:'/song/url',
+    url:'/song/url/v1',
     data:{
-      id:musicLists[index].id
+      id:musicLists[index].id,level:'lossless'
     }
   }).then(({data})=>{
     resetLyric(data[0].id)

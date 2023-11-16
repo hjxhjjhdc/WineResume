@@ -4,8 +4,8 @@
       :style="scrollFlag?`width:${widthScroll}px`:''"
   >
     <view>
-      <personInfo v-show="menuStore.computedIsActive=='about-me'" v-model="userStore.userInfo"></personInfo>
-      <Music ></Music>
+      <personInfo v-show="menuStore.computedIsActive=='about-me'&&!isRetract" v-model="userStore.userInfo"></personInfo>
+      <Music @isRetract="handleRetract"></Music>
     </view>
   </view>
 </template>
@@ -37,6 +37,14 @@ const handleScroll =()=>{
   const leftWindow = document.getElementsByTagName('uni-left-window')
   widthScroll.value = leftWindow[0].clientWidth -10
 }
+
+const isRetract = ref(false)
+const handleRetract =(flag)=>{
+    isRetract.value = flag
+    const dom = document.querySelector('uni-left-window')
+    dom.style.transition='0.3s'
+    dom.style.width=flag?'0':'30%'
+}
 onMounted(()=>{
   window.addEventListener("scroll", _.throttle(handleScroll, 100))
 })
@@ -49,5 +57,6 @@ onMounted(()=>{
 .fix-all{
   position: fixed;
   top: 180rpx;
+
 }
 </style>
